@@ -5,12 +5,7 @@ import { roleGuard } from './core/guards/role.guard';
 export const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
-    path: 'home',
-    loadChildren: () =>
-      import('./features/public/public.module').then(m => m.PublicModule)
-  },
-  {
-    path: 'courses',
+    path: '',
     loadChildren: () =>
       import('./features/public/public.module').then(m => m.PublicModule)
   },
