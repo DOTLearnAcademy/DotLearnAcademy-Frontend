@@ -1,0 +1,46 @@
+<div class="approvals-page">
+  <div class="page-header">
+    <h1>Course Approval Queue</h1>
+    <p>{{ courses.length }} courses pending review</p>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <mat-table [dataSource]="courses" *ngIf="!isLoading" class="approvals-table">
+    <ng-container matColumnDef="title">
+      <mat-header-cell *matHeaderCellDef>Course Title</mat-header-cell>
+      <mat-cell *matCellDef="let c">{{ c.title }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="instructor">
+      <mat-header-cell *matHeaderCellDef>Instructor</mat-header-cell>
+      <mat-cell *matCellDef="let c">{{ c.instructorId | slice:0:8 }}...</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="submitted">
+      <mat-header-cell *matHeaderCellDef>Submitted</mat-header-cell>
+      <mat-cell *matCellDef="let c">{{ c.createdAt | date:'mediumDate' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell *matCellDef="let c">
+        <button mat-raised-button color="accent" (click)="approve(c.id)"
+                style="margin-right: 8px">
+          <mat-icon>check</mat-icon> Approve
+        </button>
+        <button mat-stroked-button color="warn" (click)="reject(c.id)">
+          <mat-icon>close</mat-icon> Reject
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <div class="empty-state" *ngIf="!isLoading && courses.length === 0">
+    <mat-icon>approval</mat-icon>
+    <p>No courses pending approval.</p>
+  </div>
+</div>

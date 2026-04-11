@@ -1,0 +1,53 @@
+<div class="analytics-page">
+  <div class="page-header">
+    <h1>Platform Analytics</h1>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <div class="kpi-grid" *ngIf="!isLoading">
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">currency_rupee</mat-icon>
+        <div class="kpi-value">₹{{ stats.totalRevenue | number }}</div>
+        <div class="kpi-label">Total Revenue</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">people</mat-icon>
+        <div class="kpi-value">{{ stats.monthlyActiveUsers }}</div>
+        <div class="kpi-label">Monthly Active Users</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">school</mat-icon>
+        <div class="kpi-value">{{ stats.totalEnrollments }}</div>
+        <div class="kpi-label">Total Enrollments</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">menu_book</mat-icon>
+        <div class="kpi-value">{{ stats.publishedCourses }}</div>
+        <div class="kpi-label">Published Courses</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="quick-links">
+    <a mat-raised-button color="primary" routerLink="/admin/users">
+      <mat-icon>manage_accounts</mat-icon> Manage Users
+    </a>
+    <a mat-raised-button routerLink="/admin/approvals">
+      <mat-icon>approval</mat-icon> Course Approvals
+    </a>
+    <a mat-stroked-button routerLink="/admin/notifications">
+      <mat-icon>notifications</mat-icon> Send Notification
+    </a>
+  </div>
+</div>
