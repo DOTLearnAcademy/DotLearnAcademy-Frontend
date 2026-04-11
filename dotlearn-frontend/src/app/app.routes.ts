@@ -23,7 +23,7 @@ export const routes: Routes = [
     path: 'student',
     canActivate: [authGuard],
     loadChildren: () =>
-      import('./features/student/student-module').then(m => m.StudentModule)
+      import('./features/student/student.module').then(m => m.StudentModule)
   },
   {
     path: 'instructor',

@@ -1,0 +1,41 @@
+<div class="profile-page">
+  <div class="page-header">
+    <h1>Profile Settings</h1>
+  </div>
+
+  <mat-card class="profile-card">
+    <mat-card-content>
+      <div class="avatar-section">
+        <div class="avatar-circle">
+          <mat-icon>person</mat-icon>
+        </div>
+        <button mat-stroked-button (click)="avatarInput.click()">
+          <mat-icon>upload</mat-icon> Upload Avatar
+        </button>
+        <input #avatarInput type="file" accept="image/*"
+               (change)="uploadAvatar($event)" hidden>
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullName">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit"
+                [disabled]="isLoading || form.invalid">
+          Save Changes
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

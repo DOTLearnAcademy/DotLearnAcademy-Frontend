@@ -1,0 +1,38 @@
+<div class="certificates-page">
+  <div class="page-header">
+    <h1>My Certificates</h1>
+    <p>{{ certificates.length }} certificates earned</p>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <div class="cert-grid" *ngIf="!isLoading">
+    <mat-card *ngFor="let cert of certificates" class="cert-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar color="primary">card_membership</mat-icon>
+        <mat-card-title>Certificate of Completion</mat-card-title>
+        <mat-card-subtitle>
+          Earned {{ cert.createdAt | date:'mediumDate' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="verification">
+          Verification Code: <strong>{{ cert.verificationCode }}</strong>
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="download(cert)">
+          <mat-icon>download</mat-icon> Download PDF
+        </button>
+        <button mat-button (click)="shareLinkedIn(cert)">
+          <mat-icon>share</mat-icon> Share
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <div class="empty-state" *ngIf="certificates.length === 0">
+      <mat-icon>card_membership</mat-icon>
+      <p>No certificates yet. Complete a course to earn one!</p>
+    </div>
+  </div>
+</div>
