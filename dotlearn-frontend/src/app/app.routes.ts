@@ -30,7 +30,7 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { role: 'Instructor' },
     loadChildren: () =>
-      import('./features/instructor/instructor-module').then(m => m.InstructorModule)
+      import('./features/instructor/instructor.module').then(m => m.InstructorModule)
   },
   {
     path: 'admin',

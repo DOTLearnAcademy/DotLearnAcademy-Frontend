@@ -1,0 +1,42 @@
+<div class="curriculum-page">
+  <div class="page-header">
+    <h1>Curriculum Builder</h1>
+    <a mat-button routerLink="/instructor/courses">
+      <mat-icon>arrow_back</mat-icon> Back to Courses
+    </a>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <div *ngIf="isUploading" class="upload-progress">
+    <p>Uploading video... {{ uploadProgress }}%</p>
+    <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+  </div>
+
+  <div cdkDropList (cdkDropListDropped)="drop($event)" class="lesson-list">
+    <div *ngFor="let lesson of lessons" cdkDrag class="lesson-item">
+      <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
+
+      <div class="lesson-info">
+        <span class="lesson-title">{{ lesson.title }}</span>
+        <mat-chip>{{ lesson.type }}</mat-chip>
+        <mat-chip *ngIf="lesson.isPreview" color="accent" selected>Preview</mat-chip>
+      </div>
+
+      <div class="lesson-actions">
+        <label mat-icon-button *ngIf="lesson.type === 'Video'">
+          <mat-icon>upload</mat-icon>
+          <input type="file" accept="video/*" hidden
+                 (change)="uploadVideo(lesson.id, $event)">
+        </label>
+        <button mat-icon-button color="warn" (click)="deleteLesson(lesson.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="lessons.length === 0 && !isLoading">
+      <p>No lessons yet. Add your first lesson.</p>
+    </div>
+  </div>
+</div>
