@@ -1,0 +1,65 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Create Account</mat-card-title>
+      <mat-card-subtitle>Join DOTLearn Academy today</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullName" placeholder="John Doe">
+          <mat-error *ngIf="form.get('fullName')?.hasError('required')">
+            Full name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email">
+          <mat-error *ngIf="form.get('email')?.hasError('email')">
+            Invalid email format
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password"
+                 [type]="hidePassword ? 'password' : 'text'">
+          <button mat-icon-button matSuffix type="button"
+                  (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <div class="strength-meter" *ngIf="form.get('password')?.value">
+          <span>Password strength: </span>
+          <strong [style.color]="getStrengthColor()">{{ getPasswordStrength() }}</strong>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>I am a</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="Student">Student</mat-option>
+            <mat-option value="Instructor">Instructor</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <button mat-raised-button color="primary" type="submit"
+                class="full-width submit-btn" [disabled]="isLoading">
+          <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+          <span *ngIf="!isLoading">Create Account</span>
+        </button>
+
+      </form>
+
+      <div class="auth-links">
+        <span>Already have an account? <a routerLink="/auth/login">Sign in</a></span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
