@@ -1,0 +1,79 @@
+<div class="catalog-layout">
+  <!-- Sidebar Filters -->
+  <aside class="filters">
+    <h3>Filters</h3>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Search courses</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="e.g. Angular, Python">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Category</mat-label>
+      <mat-select [formControl]="categoryControl">
+        <mat-option value="">All Categories</mat-option>
+        <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Level</mat-label>
+      <mat-select [formControl]="levelControl">
+        <mat-option value="">All Levels</mat-option>
+        <mat-option *ngFor="let lvl of levels" [value]="lvl">{{ lvl }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-stroked-button (click)="clearFilters()" class="full-width">
+      Clear Filters
+    </button>
+  </aside>
+
+  <!-- Course Grid -->
+  <main class="catalog-main">
+    <div class="catalog-header">
+      <span>{{ total }} courses found</span>
+      <mat-form-field appearance="outline">
+        <mat-label>Sort by</mat-label>
+        <mat-select [formControl]="sortControl">
+          <mat-option *ngFor="let opt of sortOptions" [value]="opt.value">
+            {{ opt.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+    <div class="course-grid" *ngIf="!isLoading">
+      <mat-card *ngFor="let course of courses" class="course-card"
+                [routerLink]="['/courses', course.id]">
+        <mat-card-header>
+          <mat-card-title>{{ course.title }}</mat-card-title>
+          <mat-card-subtitle>{{ course.category }} · {{ course.level }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ course.description | slice:0:120 }}...</p>
+          <div class="course-meta">
+            <span>⭐ {{ course.averageRating | number:'1.1-1' }}</span>
+            <span>{{ course.enrollmentCount }} students</span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <span class="price">
+            {{ course.price === 0 ? 'Free' : ('₹' + course.price) }}
+          </span>
+          <a mat-button color="primary">View Course</a>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <mat-paginator
+      [length]="total"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[12, 24, 48]"
+      (page)="onPageChange($event)">
+    </mat-paginator>
+  </main>
+</div>

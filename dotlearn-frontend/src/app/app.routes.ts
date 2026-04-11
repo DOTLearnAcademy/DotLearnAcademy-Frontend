@@ -7,12 +7,12 @@ export const routes: Routes = [
   {
     path: 'home',
     loadChildren: () =>
-      import('./features/public/public-module').then(m => m.PublicModule)
+      import('./features/public/public.module').then(m => m.PublicModule)
   },
   {
     path: 'courses',
     loadChildren: () =>
-      import('./features/public/public-module').then(m => m.PublicModule)
+      import('./features/public/public.module').then(m => m.PublicModule)
   },
   {
     path: 'auth',
