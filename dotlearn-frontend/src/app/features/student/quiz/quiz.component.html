@@ -1,0 +1,70 @@
+<div class="quiz-container">
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <!-- Results -->
+  <div class="results" *ngIf="isSubmitted">
+    <mat-card class="result-card">
+      <mat-card-content>
+        <div class="score-display">
+          <span class="score-number">{{ score }}%</span>
+          <mat-chip [color]="score >= 70 ? 'accent' : 'warn'" selected>
+            {{ score >= 70 ? 'Passed' : 'Failed' }}
+          </mat-chip>
+        </div>
+        <p>You answered {{ questions.length }} questions</p>
+        <a mat-raised-button color="primary" routerLink="/student/my-learning">
+          Back to My Learning
+        </a>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz-layout" *ngIf="!isLoading && !isSubmitted">
+    <main class="quiz-main">
+      <div class="timer" [class.red]="isTimerRed">
+        <mat-icon>timer</mat-icon>
+        {{ timeDisplay }}
+      </div>
+
+      <div class="question-card" *ngIf="questions.length > 0">
+        <p class="question-number">
+          Question {{ currentIndex + 1 }} of {{ questions.length }}
+        </p>
+        <h3>{{ questions[currentIndex].text }}</h3>
+
+        <div class="options">
+          <button *ngFor="let opt of questions[currentIndex].options; let i = index"
+                  mat-stroked-button class="option-btn"
+                  [class.selected]="questions[currentIndex].selectedAnswer === i"
+                  (click)="selectAnswer(i)">
+            {{ opt }}
+          </button>
+        </div>
+
+        <div class="nav-buttons">
+          <button mat-button (click)="currentIndex = currentIndex - 1"
+                  [disabled]="currentIndex === 0">Previous</button>
+          <button mat-button (click)="currentIndex = currentIndex + 1"
+                  *ngIf="currentIndex < questions.length - 1">Next</button>
+          <button mat-raised-button color="primary" (click)="submit()"
+                  *ngIf="currentIndex === questions.length - 1">Submit Quiz</button>
+        </div>
+      </div>
+    </main>
+
+    <aside class="question-navigator">
+      <h4>Questions</h4>
+      <div class="nav-grid">
+        <button *ngFor="let q of questions; let i = index"
+                mat-mini-fab
+                [color]="q.selectedAnswer !== undefined ? 'accent' : 'basic'"
+                (click)="currentIndex = i">
+          {{ i + 1 }}
+        </button>
+      </div>
+      <button mat-raised-button color="warn" class="submit-all"
+              (click)="submit()">Submit All</button>
+    </aside>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="player-layout">
+  <main class="player-main">
+    <div class="video-container" *ngIf="!isLoading">
+      <video controls class="video-player" [src]="videoUrl"
+             *ngIf="videoUrl">
+        Your browser does not support the video tag.
+      </video>
+      <div class="no-video" *ngIf="!videoUrl">
+        <mat-icon>play_circle_outline</mat-icon>
+        <p>Video not available</p>
+      </div>
+    </div>
+    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+    <mat-tab-group class="lesson-tabs">
+      <mat-tab label="Overview">
+        <div class="tab-content">
+          <p>Lesson content and description will appear here.</p>
+        </div>
+      </mat-tab>
+      <mat-tab label="Q&A">
+        <div class="tab-content">
+          <p>Discussion forum for this lesson.</p>
+        </div>
+      </mat-tab>
+      <mat-tab label="Notes">
+        <div class="tab-content">
+          <p>Your personal notes for this lesson.</p>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </main>
+
+  <aside class="curriculum-sidebar">
+    <h3>Curriculum</h3>
+    <mat-list>
+      <mat-list-item>
+        <mat-icon matListItemIcon>play_circle</mat-icon>
+        <span matListItemTitle>Current Lesson</span>
+      </mat-list-item>
+    </mat-list>
+  </aside>
+</div>

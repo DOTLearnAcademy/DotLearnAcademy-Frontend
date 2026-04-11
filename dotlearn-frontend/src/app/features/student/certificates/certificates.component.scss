@@ -1,0 +1,31 @@
+.certificates-page { padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+.page-header {
+  margin-bottom: 32px;
+  h1 { font-size: 2rem; color: #1E3A5F; margin: 0; }
+  p { color: #666; }
+}
+
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.cert-card { border-left: 4px solid #2E75B6; }
+
+.verification {
+  background: #f5f7fa;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.empty-state {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 60px;
+  color: #666;
+  mat-icon { font-size: 4rem; opacity: 0.3; margin-bottom: 16px; }
+}

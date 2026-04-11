@@ -1,0 +1,40 @@
+<div class="purchases-page">
+  <div class="page-header">
+    <h1>Purchase History</h1>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <mat-table [dataSource]="payments" *ngIf="!isLoading" class="purchase-table">
+    <ng-container matColumnDef="date">
+      <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
+      <mat-cell *matCellDef="let p">{{ p.createdAt | date:'mediumDate' }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="course">
+      <mat-header-cell *matHeaderCellDef>Course</mat-header-cell>
+      <mat-cell *matCellDef="let p">{{ p.courseId | slice:0:8 }}...</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="amount">
+      <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
+      <mat-cell *matCellDef="let p">₹{{ p.amount }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let p">
+        <mat-chip [color]="getStatusColor(p.status)" selected>
+          {{ p.status }}
+        </mat-chip>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <div class="empty-state" *ngIf="!isLoading && payments.length === 0">
+    <p>No purchases yet.</p>
+  </div>
+</div>
