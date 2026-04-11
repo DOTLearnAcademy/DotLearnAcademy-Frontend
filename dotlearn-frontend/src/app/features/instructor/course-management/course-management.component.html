@@ -1,0 +1,122 @@
+<div class="courses-page">
+  <div class="page-header">
+    <h1>My Courses</h1>
+    <button mat-raised-button color="primary" (click)="showWizard = true">
+      <mat-icon>add</mat-icon> Create Course
+    </button>
+  </div>
+
+  <!-- Create Course Wizard -->
+  <mat-card *ngIf="showWizard" class="wizard-card">
+    <mat-card-header>
+      <mat-card-title>Create New Course</mat-card-title>
+      <button mat-icon-button (click)="showWizard = false" style="margin-left:auto">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-stepper [selectedIndex]="currentStep" linear>
+
+        <!-- Step 1: Basic Info -->
+        <mat-step [stepControl]="step1Form" label="Basic Info">
+          <form [formGroup]="step1Form">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Course Title</mat-label>
+              <input matInput formControlName="title">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="4"></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category">
+                <mat-option *ngFor="let c of categories" [value]="c">{{ c }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Level</mat-label>
+              <mat-select formControlName="level">
+                <mat-option *ngFor="let l of levels" [value]="l">{{ l }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="step-actions">
+              <button mat-raised-button color="primary" matStepperNext
+                      [disabled]="step1Form.invalid">Next</button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- Step 2: Pricing -->
+        <mat-step [stepControl]="step2Form" label="Pricing">
+          <form [formGroup]="step2Form">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Price (INR) — Enter 0 for free</mat-label>
+              <input matInput formControlName="price" type="number" min="0">
+              <span matPrefix>₹&nbsp;</span>
+            </mat-form-field>
+            <div class="step-actions">
+              <button mat-button matStepperPrevious>Back</button>
+              <button mat-raised-button color="primary"
+                      [disabled]="step2Form.invalid || isSubmitting"
+                      (click)="createCourse()">
+                Create Course
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+      </mat-stepper>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Courses Table -->
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <mat-table [dataSource]="courses" *ngIf="!isLoading" class="courses-table">
+    <ng-container matColumnDef="title">
+      <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
+      <mat-cell *matCellDef="let c">{{ c.title }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="state">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let c">
+        <mat-chip [color]="getStateColor(c.state)" selected>{{ c.state }}</mat-chip>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="enrollments">
+      <mat-header-cell *matHeaderCellDef>Students</mat-header-cell>
+      <mat-cell *matCellDef="let c">{{ c.enrollmentCount }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="price">
+      <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
+      <mat-cell *matCellDef="let c">
+        {{ c.price === 0 ? 'Free' : ('₹' + c.price) }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell *matCellDef="let c">
+        <a mat-icon-button [routerLink]="['/instructor/courses', c.id, 'curriculum']"
+           matTooltip="Curriculum">
+          <mat-icon>list</mat-icon>
+        </a>
+        <button mat-icon-button (click)="publish(c.id)"
+                *ngIf="c.state === 'Draft'" matTooltip="Publish">
+          <mat-icon>publish</mat-icon>
+        </button>
+        <button mat-icon-button (click)="archive(c.id)"
+                *ngIf="c.state !== 'Archived'" matTooltip="Archive">
+          <mat-icon>archive</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>

@@ -1,0 +1,97 @@
+<div class="quiz-builder-page">
+  <div class="page-header">
+    <h1>Quiz Builder</h1>
+    <a mat-button routerLink="/instructor/courses">
+      <mat-icon>arrow_back</mat-icon> Back
+    </a>
+  </div>
+
+  <div class="success-message" *ngIf="successMessage">{{ successMessage }}</div>
+
+  <form [formGroup]="quizForm" (ngSubmit)="onSubmit()">
+    <mat-card class="quiz-settings">
+      <mat-card-header><mat-card-title>Quiz Settings</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Quiz Title</mat-label>
+          <input matInput formControlName="title">
+        </mat-form-field>
+
+        <div class="settings-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Time Limit (minutes)</mat-label>
+            <input matInput formControlName="timeLimitMinutes" type="number">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Passing Score (%)</mat-label>
+            <input matInput formControlName="passingScore" type="number">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Max Attempts</mat-label>
+            <input matInput formControlName="maxAttempts" type="number">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div formArrayName="questions">
+      <mat-card *ngFor="let q of questions.controls; let i = index"
+                [formGroupName]="i" class="question-card">
+        <mat-card-header>
+          <mat-card-title>Question {{ i + 1 }}</mat-card-title>
+          <button mat-icon-button color="warn" type="button"
+                  (click)="removeQuestion(i)" style="margin-left:auto">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Question Text</mat-label>
+            <input matInput formControlName="text">
+          </mat-form-field>
+
+          <div class="settings-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Type</mat-label>
+              <mat-select formControlName="type">
+                <mat-option value="SingleChoice">Single Choice</mat-option>
+                <mat-option value="MultipleChoice">Multiple Choice</mat-option>
+                <mat-option value="TrueFalse">True/False</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Marks</mat-label>
+              <input matInput formControlName="marks" type="number">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Correct Answer (index)</mat-label>
+              <input matInput formControlName="correctAnswer" type="number">
+            </mat-form-field>
+          </div>
+
+          <div formArrayName="options">
+            <mat-form-field *ngFor="let opt of getOptions(i).controls; let j = index"
+                            appearance="outline" class="full-width" [formGroupName]="j">
+              <mat-label>Option {{ j + 1 }}</mat-label>
+              <input matInput [formControlName]="j">
+            </mat-form-field>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="form-actions">
+      <button mat-stroked-button type="button" (click)="addQuestion()">
+        <mat-icon>add</mat-icon> Add Question
+      </button>
+      <button mat-raised-button color="primary" type="submit"
+              [disabled]="isSubmitting || quizForm.invalid">
+        Create Quiz
+      </button>
+    </div>
+  </form>
+</div>

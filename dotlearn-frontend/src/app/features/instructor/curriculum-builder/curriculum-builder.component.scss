@@ -1,0 +1,42 @@
+.curriculum-page { padding: 40px; max-width: 900px; margin: 0 auto; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  h1 { font-size: 2rem; color: #1E3A5F; margin: 0; }
+}
+
+.upload-progress { margin-bottom: 24px; }
+
+.lesson-list { display: flex; flex-direction: column; gap: 8px; }
+
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: move;
+
+  &.cdk-drag-preview {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+}
+
+.drag-handle { color: #bbb; cursor: grab; }
+
+.lesson-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lesson-title { font-weight: 500; color: #1E3A5F; }
+.lesson-actions { display: flex; gap: 4px; }
+
+.empty-state { text-align: center; padding: 60px; color: #666; }

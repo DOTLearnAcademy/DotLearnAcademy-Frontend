@@ -1,0 +1,51 @@
+<div class="analytics-page">
+  <div class="page-header">
+    <h1>Instructor Dashboard</h1>
+    <p>Welcome back! Here's your performance overview.</p>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <div class="kpi-grid" *ngIf="!isLoading">
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">people</mat-icon>
+        <div class="kpi-value">{{ stats.totalStudents }}</div>
+        <div class="kpi-label">Total Students</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">currency_rupee</mat-icon>
+        <div class="kpi-value">₹{{ stats.totalRevenue | number }}</div>
+        <div class="kpi-label">Total Revenue</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">school</mat-icon>
+        <div class="kpi-value">{{ stats.activeEnrollments }}</div>
+        <div class="kpi-label">Active Enrollments</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <mat-icon class="kpi-icon">star</mat-icon>
+        <div class="kpi-value">{{ stats.averageRating | number:'1.1-1' }}</div>
+        <div class="kpi-label">Average Rating</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="quick-actions">
+    <a mat-raised-button color="primary" routerLink="/instructor/courses">
+      <mat-icon>add</mat-icon> Create New Course
+    </a>
+    <a mat-stroked-button routerLink="/instructor/courses">
+      <mat-icon>list</mat-icon> Manage Courses
+    </a>
+  </div>
+</div>

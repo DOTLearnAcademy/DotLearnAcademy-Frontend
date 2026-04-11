@@ -1,0 +1,15 @@
+.courses-page { padding: 40px; max-width: 1200px; margin: 0 auto; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  h1 { font-size: 2rem; color: #1E3A5F; margin: 0; }
+}
+
+.wizard-card { margin-bottom: 32px; padding: 8px; }
+.full-width { width: 100%; margin-bottom: 16px; }
+.half-width { width: calc(50% - 8px); margin-right: 16px; margin-bottom: 16px; }
+.step-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.courses-table { width: 100%; }
