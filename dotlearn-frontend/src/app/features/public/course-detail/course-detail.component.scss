@@ -1,0 +1,52 @@
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.course-hero {
+  h1 { font-size: 2rem; color: #1E3A5F; margin: 16px 0; }
+  p { color: #555; line-height: 1.6; margin-bottom: 16px; }
+}
+
+.course-stats {
+  display: flex;
+  gap: 24px;
+  color: #666;
+}
+
+.sticky-sidebar { position: sticky; top: 80px; }
+
+.enrollment-card {
+  .price-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1E3A5F;
+    margin-bottom: 16px;
+  }
+}
+
+.full-width { width: 100%; }
+.enroll-btn { height: 48px; font-size: 1rem; margin-bottom: 12px; }
+
+.guarantee {
+  text-align: center;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.includes {
+  list-style: none;
+  padding: 0;
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    color: #555;
+    mat-icon { color: #2E75B6; font-size: 1.1rem; }
+  }
+}

@@ -1,0 +1,41 @@
+<div *ngIf="isLoading" class="loading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div *ngIf="course && !isLoading" class="detail-layout">
+  <!-- Main Content -->
+  <main class="detail-main">
+    <div class="course-hero">
+      <mat-chip>{{ course.level }}</mat-chip>
+      <mat-chip>{{ course.category }}</mat-chip>
+      <h1>{{ course.title }}</h1>
+      <p>{{ course.description }}</p>
+      <div class="course-stats">
+        <span>⭐ {{ course.averageRating | number:'1.1-1' }}</span>
+        <span>{{ course.enrollmentCount }} students enrolled</span>
+      </div>
+    </div>
+  </main>
+
+  <!-- Sticky Sidebar -->
+  <aside class="sticky-sidebar">
+    <mat-card class="enrollment-card">
+      <mat-card-content>
+        <div class="price-display">
+          {{ course.price === 0 ? 'Free' : ('₹' + course.price) }}
+        </div>
+        <button mat-raised-button color="primary" class="full-width enroll-btn"
+                (click)="enroll()" [disabled]="isEnrolling">
+          {{ course.price === 0 ? 'Enroll for Free' : 'Buy Now' }}
+        </button>
+        <p class="guarantee">30-day money-back guarantee</p>
+        <ul class="includes">
+          <li><mat-icon>play_circle</mat-icon> Full video lessons</li>
+          <li><mat-icon>quiz</mat-icon> Practice quizzes</li>
+          <li><mat-icon>card_membership</mat-icon> Certificate of completion</li>
+          <li><mat-icon>all_inclusive</mat-icon> Lifetime access</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </aside>
+</div>
