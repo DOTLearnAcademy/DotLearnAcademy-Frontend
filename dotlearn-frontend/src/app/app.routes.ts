@@ -17,7 +17,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () =>
-      import('./features/auth/auth-module').then(m => m.AuthModule)
+      import('./features/auth/auth.module').then(m => m.AuthModule)
   },
   {
     path: 'student',
