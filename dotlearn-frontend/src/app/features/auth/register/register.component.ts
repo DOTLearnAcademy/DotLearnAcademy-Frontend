@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../../environments/environment';
+
+declare var google: any;
 
 @Component({
   selector: 'app-register',
@@ -41,6 +44,37 @@ export class RegisterComponent {
     if (strength === 'Weak') return '#f44336';
     if (strength === 'Medium') return '#ff9800';
     return '#4caf50';
+  }
+
+  ngOnInit() {
+    if (typeof google === 'undefined') {
+      setTimeout(() => this.ngOnInit(), 500);
+      return;
+    }
+    
+    google.accounts.id.initialize({
+      client_id: environment.googleClientId,
+      callback: this.handleGoogleCredentialResponse.bind(this)
+    });
+    
+    google.accounts.id.renderButton(
+      document.getElementById("google-btn"),
+      { theme: "outline", size: "large", width: "100%", text: "signup_with" }
+    );
+  }
+
+  handleGoogleCredentialResponse(response: any) {
+    this.isLoading = true;
+    this.authService.googleLogin(response.credential).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.router.navigate(['/student/my-learning']);
+      },
+      error: () => {
+        this.isLoading = false;
+        this.errorMessage = 'Google Sign up failed. Please try again.';
+      }
+    });
   }
 
   onSubmit() {

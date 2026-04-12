@@ -1,61 +1,201 @@
 .hero {
-  background: linear-gradient(135deg, #1E3A5F 0%, #2E75B6 100%);
-  color: white;
-  padding: 80px 40px;
-  text-align: center;
+  padding: 100px 40px;
+  position: relative;
+  overflow: hidden;
 
-  h1 { font-size: 3rem; margin-bottom: 16px; }
-  p { font-size: 1.2rem; margin-bottom: 32px; opacity: 0.9; }
+  // Add subtle abstract glow in background
+  &::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+  }
+}
+
+.hero-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 650px;
+  text-align: left;
+
+  h1 { 
+    font-size: 3.5rem; 
+    line-height: 1.1;
+    margin-bottom: 24px; 
+    font-weight: 800;
+    color: white;
+  }
+  
+  p { 
+    font-size: 1.25rem; 
+    line-height: 1.6;
+    margin-bottom: 40px; 
+    color: #cbd5e1;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  a {
+    height: 52px;
+    padding: 0 32px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.cta-secondary {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+  border-radius: var(--radius-button) !important;
+  transition: all 0.3s ease !important;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.8) !important;
+  }
+  
+  &.glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+  }
+}
+
+.abstract-shape {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  animation: morph 8s ease-in-out infinite;
+}
+
+@keyframes morph {
+  0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+  100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
 }
 
 .section {
-  padding: 60px 40px;
-  h2 { font-size: 2rem; margin-bottom: 32px; color: #1E3A5F; }
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h2 { 
+    font-size: 2.2rem; 
+    margin-bottom: 40px; 
+    color: var(--color-text-main); 
+  }
 }
 
 .course-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 32px;
 }
 
+// Inherits from global .mat-mdc-card now
 .course-card {
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  &:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
 }
 
 .course-meta {
   display: flex;
   gap: 16px;
-  margin-top: 8px;
-  color: #666;
-  font-size: 0.9rem;
+  margin-top: 16px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .price {
-  font-weight: bold;
-  color: #2E75B6;
-  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 1.2rem;
 }
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
 }
 
 .category-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  justify-content: center;
+  padding: 32px 24px;
+  background: white;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
   cursor: pointer;
-  transition: all 0.2s;
-  gap: 8px;
+  transition: all 0.3s ease;
+  gap: 12px;
+  border: 1px solid rgba(0,0,0,0.03);
 
-  mat-icon { font-size: 2rem; color: #2E75B6; }
-  &:hover { background: #EBF3FA; border-color: #2E75B6; }
+  mat-icon { 
+    font-size: 2.5rem; 
+    color: var(--color-primary); 
+    width: 40px;
+    height: 40px;
+    transition: transform 0.3s ease;
+  }
+  
+  span {
+    font-weight: 600;
+    color: var(--color-text-main);
+  }
+
+  &:hover { 
+    transform: translateY(-4px); 
+    box-shadow: var(--shadow-card);
+    border-color: rgba(79, 70, 229, 0.3);
+    
+    mat-icon {
+      transform: scale(1.1);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-content {
+    text-align: center;
+    h1 { font-size: 2.5rem; }
+    p { font-size: 1.1rem; }
+  }
+  .hero-actions {
+    justify-content: center;
+  }
+  .hero-graphic {
+    display: none;
+  }
 }

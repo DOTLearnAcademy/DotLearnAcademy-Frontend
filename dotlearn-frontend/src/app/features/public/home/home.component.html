@@ -1,17 +1,25 @@
 <!-- Hero Section -->
-<section class="hero">
-  <div class="hero-content">
-    <h1>Learn Without Limits</h1>
-    <p>Discover thousands of courses taught by expert instructors</p>
-    <a mat-raised-button color="primary" routerLink="/courses">
-      Browse Courses
-    </a>
-    <a mat-stroked-button color="primary" routerLink="/auth/login" style="margin-left: 10px;">
-      Login
-    </a>
-    <a mat-flat-button color="accent" routerLink="/auth/register" style="margin-left: 10px;">
-      Sign Up
-    </a>
+<section class="hero premium-gradient-bg">
+  <div class="hero-container">
+    <div class="hero-content">
+      <h1>Learn Without Limits</h1>
+      <p>Discover thousands of courses taught by expert instructors. Elevate your career with DOTLearn Academy.</p>
+      <div class="hero-actions">
+        <a mat-raised-button color="primary" routerLink="/courses" class="cta-primary">
+          Explore Courses
+        </a>
+        <a mat-stroked-button class="cta-secondary glass" routerLink="/auth/login">
+          Sign In
+        </a>
+        <a mat-stroked-button class="cta-secondary" routerLink="/auth/register">
+          Get Started For Free
+        </a>
+      </div>
+    </div>
+    <div class="hero-graphic">
+      <!-- We can place an abstract shape or 3D illustration here -->
+      <div class="abstract-shape"></div>
+    </div>
   </div>
 </section>
 
