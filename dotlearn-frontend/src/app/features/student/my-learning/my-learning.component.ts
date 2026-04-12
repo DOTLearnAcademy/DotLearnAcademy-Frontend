@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { EnrollmentService, Enrollment } from '../services/enrollment.service';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-my-learning',
@@ -12,10 +13,19 @@ export class MyLearningComponent implements OnInit {
   filteredEnrollments: Enrollment[] = [];
   activeTab = 'all';
   isLoading = true;
+  studentName = 'Student';
 
-  constructor(private enrollmentService: EnrollmentService) {}
+  constructor(
+    private enrollmentService: EnrollmentService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
+    const profile = this.authService.getProfile();
+    if (profile?.fullName) {
+      this.studentName = profile.fullName.split(' ')[0];
+    }
+
     this.enrollments = [];
     this.filter('all');
     this.isLoading = false;
@@ -40,5 +50,9 @@ export class MyLearningComponent implements OnInit {
       if (tab === 'completed') return e.progressPercent >= 100;
       return true;
     });
+  }
+
+  getCourseInitial(courseId: string): string {
+    return courseId ? courseId[0].toUpperCase() : 'C';
   }
 }

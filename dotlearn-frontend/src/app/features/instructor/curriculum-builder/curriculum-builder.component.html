@@ -1,42 +1,144 @@
 <div class="curriculum-page">
+
+  <!-- Header -->
   <div class="page-header">
-    <h1>Curriculum Builder</h1>
-    <a mat-button routerLink="/instructor/courses">
-      <mat-icon>arrow_back</mat-icon> Back to Courses
-    </a>
+    <div class="header-left">
+      <a class="back-link" routerLink="/instructor/courses">
+        ← Back to Courses
+      </a>
+      <h1>Curriculum Builder</h1>
+      <p class="header-subtitle">Drag lessons to reorder • Click to upload video content</p>
+    </div>
+    <button class="btn-add-lesson" (click)="showAddLesson = true">
+      + Add Lesson
+    </button>
   </div>
 
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+  <!-- Banners -->
+  <div class="banner banner-success" *ngIf="successMessage">✅ {{ successMessage }}</div>
+  <div class="banner banner-error" *ngIf="errorMessage">❌ {{ errorMessage }}</div>
 
-  <div *ngIf="isUploading" class="upload-progress">
-    <p>Uploading video... {{ uploadProgress }}%</p>
-    <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
-  </div>
-
-  <div cdkDropList (cdkDropListDropped)="drop($event)" class="lesson-list">
-    <div *ngFor="let lesson of lessons" cdkDrag class="lesson-item">
-      <mat-icon cdkDragHandle class="drag-handle">drag_indicator</mat-icon>
-
-      <div class="lesson-info">
-        <span class="lesson-title">{{ lesson.title }}</span>
-        <mat-chip>{{ lesson.type }}</mat-chip>
-        <mat-chip *ngIf="lesson.isPreview" color="accent" selected>Preview</mat-chip>
+  <!-- Add Lesson Panel -->
+  <div class="add-lesson-overlay" *ngIf="showAddLesson" (click)="showAddLesson = false">
+    <div class="add-lesson-card" (click)="$event.stopPropagation()">
+      <div class="card-header">
+        <h3>Add New Lesson</h3>
+        <button class="close-btn" (click)="showAddLesson = false">✕</button>
       </div>
 
-      <div class="lesson-actions">
-        <label mat-icon-button *ngIf="lesson.type === 'Video'">
-          <mat-icon>upload</mat-icon>
-          <input type="file" accept="video/*" hidden
-                 (change)="uploadVideo(lesson.id, $event)">
-        </label>
-        <button mat-icon-button color="warn" (click)="deleteLesson(lesson.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-    </div>
+      <form [formGroup]="lessonForm" class="lesson-form">
+        <div class="field-group">
+          <label>Lesson Title *</label>
+          <input type="text" formControlName="title" class="field-input"
+            placeholder="e.g., Introduction to Variables">
+          <span class="field-error" *ngIf="lessonForm.get('title')?.invalid && lessonForm.get('title')?.touched">
+            Title must be at least 3 characters
+          </span>
+        </div>
 
-    <div class="empty-state" *ngIf="lessons.length === 0 && !isLoading">
-      <p>No lessons yet. Add your first lesson.</p>
+        <div class="field-row">
+          <div class="field-group">
+            <label>Content Type *</label>
+            <select formControlName="type" class="field-input field-select">
+              <option *ngFor="let t of lessonTypes" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="field-group toggle-group">
+            <label>Free Preview</label>
+            <div class="toggle-row">
+              <label class="toggle">
+                <input type="checkbox" formControlName="isPreview">
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label">{{ lessonForm.value.isPreview ? 'Yes' : 'No' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Description (optional)</label>
+          <textarea formControlName="description" class="field-input" rows="3"
+            placeholder="Brief overview of this lesson..."></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showAddLesson = false">Cancel</button>
+          <button type="button" class="btn-primary-action"
+            [disabled]="lessonForm.invalid || isSubmittingLesson" (click)="addLesson()">
+            <span *ngIf="!isSubmittingLesson">🎯 Add Lesson</span>
+            <span *ngIf="isSubmittingLesson">Adding...</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
+
+  <!-- Loading -->
+  <div class="loading-wrap" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading curriculum...</span>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && lessons.length === 0">
+    <div class="empty-icon">🎬</div>
+    <h3>No lessons yet</h3>
+    <p>Start by adding your first lesson to build the course curriculum.</p>
+    <button class="btn-add-lesson" (click)="showAddLesson = true">+ Add First Lesson</button>
+  </div>
+
+  <!-- Lesson List -->
+  <div *ngIf="!isLoading && lessons.length > 0">
+    <div class="lessons-count">{{ lessons.length }} lesson{{ lessons.length !== 1 ? 's' : '' }}</div>
+
+    <div cdkDropList (cdkDropListDropped)="drop($event)" class="lesson-list">
+      <div *ngFor="let lesson of lessons; let i = index" cdkDrag class="lesson-item">
+
+        <!-- Drag placeholder -->
+        <div class="cdk-drag-placeholder" *cdkDragPlaceholder></div>
+
+        <div class="lesson-number" cdkDragHandle>{{ i + 1 }}</div>
+        <div class="drag-handle" cdkDragHandle>⠿</div>
+
+        <div class="lesson-info">
+          <div class="lesson-title-row">
+            <span class="lesson-title">{{ lesson.title }}</span>
+            <span *ngIf="lesson.isPreview" class="preview-badge">Free Preview</span>
+          </div>
+          <div class="lesson-meta">
+            <span class="type-badge" [ngClass]="'type-' + lesson.type.toLowerCase()">
+              {{ lesson.type === 'Video' ? '🎬' : lesson.type === 'Text' ? '📄' : '❓' }}
+              {{ lesson.type }}
+            </span>
+            <span *ngIf="lesson.durationSeconds" class="duration">
+              {{ formatDuration(lesson.durationSeconds) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="lesson-actions">
+          <!-- Upload progress -->
+          <div class="upload-progress-wrap" *ngIf="uploadingLessonId === lesson.id">
+            <div class="upload-track">
+              <div class="upload-fill" [style.width.%]="uploadProgress"></div>
+            </div>
+            <span class="upload-pct">{{ uploadProgress }}%</span>
+          </div>
+
+          <!-- Upload video button (for Video type) -->
+          <label class="action-btn" *ngIf="lesson.type === 'Video' && uploadingLessonId !== lesson.id">
+            <span>🎬</span> Upload
+            <input type="file" accept="video/*" hidden (change)="uploadVideo(lesson.id, $event)">
+          </label>
+
+          <!-- Delete -->
+          <button class="action-btn action-btn-danger" (click)="deleteLesson(lesson.id)"
+            *ngIf="uploadingLessonId !== lesson.id">
+            <span>🗑</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

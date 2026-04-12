@@ -17,6 +17,13 @@ export interface RegisterRequest {
   role: string;
 }
 
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = environment.apiUrl;
@@ -29,6 +36,7 @@ export class AuthService {
       tap(res => {
         localStorage.setItem('accessToken', res.accessToken);
         localStorage.setItem('refreshToken', res.refreshToken);
+        this.decodeAndStoreProfile(res.accessToken);
       })
     );
   }
@@ -39,6 +47,7 @@ export class AuthService {
       tap(res => {
         localStorage.setItem('accessToken', res.accessToken);
         localStorage.setItem('refreshToken', res.refreshToken);
+        this.decodeAndStoreProfile(res.accessToken);
       })
     );
   }
@@ -49,7 +58,7 @@ export class AuthService {
 
   logout() {
     localStorage.clear();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/home']);
   }
 
   requestPasswordReset(email: string): Observable<any> {
@@ -64,5 +73,49 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!localStorage.getItem('accessToken');
+  }
+
+  getProfile(): UserProfile | null {
+    const raw = localStorage.getItem('userProfile');
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  getRole(): string {
+    const profile = this.getProfile();
+    return profile?.role ?? '';
+  }
+
+  getRoleRedirect(): string {
+    const role = this.getRole();
+    if (role === 'Instructor') return '/instructor/analytics';
+    if (role === 'Admin') return '/admin';
+    return '/student/my-learning';
+  }
+
+  private decodeAndStoreProfile(token: string): void {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // Support multiple JWT claim formats
+      const role =
+        payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+        payload['role'] ||
+        payload['Role'] ||
+        '';
+      const fullName =
+        payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] ||
+        payload['name'] ||
+        payload['Name'] ||
+        '';
+      const email =
+        payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ||
+        payload['email'] ||
+        payload['Email'] ||
+        '';
+      const id = payload['sub'] || payload['id'] || '';
+      const profile: UserProfile = { id, fullName, email, role };
+      localStorage.setItem('userProfile', JSON.stringify(profile));
+    } catch {
+      console.warn('Could not decode JWT payload');
+    }
   }
 }

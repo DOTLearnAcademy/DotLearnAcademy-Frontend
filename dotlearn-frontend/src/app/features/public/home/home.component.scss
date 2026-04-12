@@ -157,6 +157,8 @@
   transition: all 0.3s ease;
   gap: 12px;
   border: 1px solid rgba(0,0,0,0.03);
+  min-height: 160px;
+  text-align: center;
 
   mat-icon { 
     font-size: 2.5rem; 

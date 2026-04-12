@@ -1,0 +1,67 @@
+<nav class="dotlearn-navbar">
+  <div class="nav-container">
+    <!-- Logo -->
+    <a routerLink="/home" class="nav-logo">
+      <div class="logo-icon">
+        <span>D</span>
+      </div>
+      <span class="logo-text">DOT<strong>Learn</strong></span>
+    </a>
+
+    <!-- Center Links (visible when logged in) -->
+    <div class="nav-links" *ngIf="isLoggedIn">
+      <ng-container *ngIf="userRole === 'Student'">
+        <a routerLink="/student/my-learning" routerLinkActive="active" class="nav-link">
+          <span class="nav-link-icon">📚</span> My Learning
+        </a>
+        <a routerLink="/courses" routerLinkActive="active" class="nav-link">
+          <span class="nav-link-icon">🔍</span> Explore
+        </a>
+      </ng-container>
+      <ng-container *ngIf="userRole === 'Instructor'">
+        <a routerLink="/instructor/analytics" routerLinkActive="active" class="nav-link">
+          <span class="nav-link-icon">📊</span> Dashboard
+        </a>
+        <a routerLink="/instructor/courses" routerLinkActive="active" class="nav-link">
+          <span class="nav-link-icon">🎓</span> My Courses
+        </a>
+      </ng-container>
+      <ng-container *ngIf="userRole === 'Admin'">
+        <a routerLink="/admin" routerLinkActive="active" class="nav-link">
+          <span class="nav-link-icon">⚙️</span> Admin Panel
+        </a>
+      </ng-container>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="nav-actions">
+      <ng-container *ngIf="!isLoggedIn">
+        <a routerLink="/auth/login" class="btn-ghost">Sign In</a>
+      </ng-container>
+
+      <ng-container *ngIf="isLoggedIn">
+        <!-- Role Badge -->
+        <div class="role-badge" [class]="'role-' + userRole?.toLowerCase()">
+          {{ userRole }}
+        </div>
+
+        <!-- User Avatar & Dropdown -->
+        <div class="user-menu" (click)="toggleDropdown()" (clickOutside)="closeDropdown()">
+          <div class="avatar">
+            {{ userInitials }}
+          </div>
+          <div class="dropdown" *ngIf="dropdownOpen">
+            <div class="dropdown-header">
+              <strong>{{ userName }}</strong>
+              <span class="dropdown-email">{{ userEmail }}</span>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item logout-btn" (click)="logout()">
+              <span>🚪</span> Sign Out
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</nav>

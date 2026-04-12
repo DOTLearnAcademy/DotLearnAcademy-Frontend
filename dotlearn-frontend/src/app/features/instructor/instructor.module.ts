@@ -8,15 +8,10 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableModule } from '@angular/material/table';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatStepperModule } from '@angular/material/stepper';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { CourseManagementComponent } from './course-management/course-management.component';
 import { CurriculumBuilderComponent } from './curriculum-builder/curriculum-builder.component';
@@ -50,15 +45,10 @@ const routes: Routes = [
     MatInputModule,
     MatIconModule,
     MatSelectModule,
-    MatTableModule,
-    MatTabsModule,
-    MatChipsModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatDialogModule,
-    MatSlideToggleModule,
-    MatStepperModule,
     MatDividerModule,
+    MatTooltipModule,
   ]
 })
 export class InstructorModule {}

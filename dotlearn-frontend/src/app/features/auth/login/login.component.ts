@@ -43,7 +43,7 @@ export class LoginComponent {
     
     google.accounts.id.renderButton(
       document.getElementById("google-btn"),
-      { theme: "outline", size: "large", width: "100%" }
+      { theme: "outline", size: "large", width: 380 }
     );
   }
 
@@ -52,7 +52,7 @@ export class LoginComponent {
     this.authService.googleLogin(response.credential).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/student/my-learning']);
+        this.router.navigate([this.authService.getRoleRedirect()]);
       },
       error: () => {
         this.isLoading = false;
@@ -70,7 +70,7 @@ export class LoginComponent {
     this.authService.login(email, password).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/student/my-learning']);
+        this.router.navigate([this.authService.getRoleRedirect()]);
       },
       error: () => {
         this.isLoading = false;

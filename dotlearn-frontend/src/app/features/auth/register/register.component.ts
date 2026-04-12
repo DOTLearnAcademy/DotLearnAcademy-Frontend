@@ -59,7 +59,7 @@ export class RegisterComponent {
     
     google.accounts.id.renderButton(
       document.getElementById("google-btn"),
-      { theme: "outline", size: "large", width: "100%", text: "signup_with" }
+      { theme: "outline", size: "large", width: 380, text: "signup_with" }
     );
   }
 
@@ -68,7 +68,7 @@ export class RegisterComponent {
     this.authService.googleLogin(response.credential).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigate(['/student/my-learning']);
+        this.router.navigate([this.authService.getRoleRedirect()]);
       },
       error: () => {
         this.isLoading = false;
@@ -88,7 +88,7 @@ export class RegisterComponent {
         // Auto login after register
         const { email, password } = this.form.value;
         this.authService.login(email, password).subscribe({
-          next: () => this.router.navigate(['/student/my-learning']),
+          next: () => this.router.navigate([this.authService.getRoleRedirect()]),
           error: () => this.router.navigate(['/auth/login'])
         });
       },

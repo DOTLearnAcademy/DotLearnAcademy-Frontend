@@ -1,122 +1,186 @@
 <div class="courses-page">
+
+  <!-- Page Header -->
   <div class="page-header">
-    <h1>My Courses</h1>
-    <button mat-raised-button color="primary" (click)="showWizard = true">
-      <mat-icon>add</mat-icon> Create Course
+    <div class="header-left">
+      <h1>My Courses</h1>
+      <p class="header-subtitle">Manage, publish, and track your courses</p>
+    </div>
+    <button class="btn-create" (click)="openWizard()">
+      <span>+</span> Create Course
     </button>
   </div>
 
-  <!-- Create Course Wizard -->
-  <mat-card *ngIf="showWizard" class="wizard-card">
-    <mat-card-header>
-      <mat-card-title>Create New Course</mat-card-title>
-      <button mat-icon-button (click)="showWizard = false" style="margin-left:auto">
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-card-header>
-    <mat-card-content>
-      <mat-stepper [selectedIndex]="currentStep" linear>
+  <!-- Success / Error Banners -->
+  <div class="banner banner-success" *ngIf="successMessage">
+    ✅ {{ successMessage }}
+  </div>
+  <div class="banner banner-error" *ngIf="errorMessage && !showWizard">
+    ❌ {{ errorMessage }}
+  </div>
 
-        <!-- Step 1: Basic Info -->
-        <mat-step [stepControl]="step1Form" label="Basic Info">
-          <form [formGroup]="step1Form">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Course Title</mat-label>
-              <input matInput formControlName="title">
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Description</mat-label>
-              <textarea matInput formControlName="description" rows="4"></textarea>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Category</mat-label>
-              <mat-select formControlName="category">
-                <mat-option *ngFor="let c of categories" [value]="c">{{ c }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="half-width">
-              <mat-label>Level</mat-label>
-              <mat-select formControlName="level">
-                <mat-option *ngFor="let l of levels" [value]="l">{{ l }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <div class="step-actions">
-              <button mat-raised-button color="primary" matStepperNext
-                      [disabled]="step1Form.invalid">Next</button>
+  <!-- ── Create Course Wizard Overlay ── -->
+  <div class="wizard-overlay" *ngIf="showWizard" (click)="closeWizard()">
+    <div class="wizard-card" (click)="$event.stopPropagation()">
+
+      <div class="wizard-header">
+        <div>
+          <h2>Create New Course</h2>
+          <p>Fill in the details below to launch your course</p>
+        </div>
+        <button class="close-btn" (click)="closeWizard()">✕</button>
+      </div>
+
+      <!-- Step indicators -->
+      <div class="step-indicators">
+        <div class="step-indicator" [class.active]="currentStep === 0" [class.done]="currentStep > 0">
+          <div class="step-num">1</div>
+          <span>Basic Info</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-indicator" [class.active]="currentStep === 1">
+          <div class="step-num">2</div>
+          <span>Pricing</span>
+        </div>
+      </div>
+
+      <div class="wizard-error" *ngIf="errorMessage">❌ {{ errorMessage }}</div>
+
+      <!-- Step 1: Basic Info -->
+      <div *ngIf="currentStep === 0">
+        <form [formGroup]="step1Form" class="wizard-form">
+          <div class="field-group">
+            <label>Course Title *</label>
+            <input type="text" formControlName="title" placeholder="e.g., Complete Python Bootcamp" class="field-input">
+            <span class="field-error" *ngIf="step1Form.get('title')?.invalid && step1Form.get('title')?.touched">
+              Title must be at least 5 characters
+            </span>
+          </div>
+
+          <div class="field-group">
+            <label>Description *</label>
+            <textarea formControlName="description" rows="4"
+              placeholder="What will students learn? Be specific and compelling..." class="field-input"></textarea>
+            <span class="field-error" *ngIf="step1Form.get('description')?.invalid && step1Form.get('description')?.touched">
+              Description must be at least 20 characters
+            </span>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>Category *</label>
+              <select formControlName="category" class="field-input field-select">
+                <option value="">Select category...</option>
+                <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+              </select>
             </div>
-          </form>
-        </mat-step>
-
-        <!-- Step 2: Pricing -->
-        <mat-step [stepControl]="step2Form" label="Pricing">
-          <form [formGroup]="step2Form">
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Price (INR) — Enter 0 for free</mat-label>
-              <input matInput formControlName="price" type="number" min="0">
-              <span matPrefix>₹&nbsp;</span>
-            </mat-form-field>
-            <div class="step-actions">
-              <button mat-button matStepperPrevious>Back</button>
-              <button mat-raised-button color="primary"
-                      [disabled]="step2Form.invalid || isSubmitting"
-                      (click)="createCourse()">
-                Create Course
-              </button>
+            <div class="field-group">
+              <label>Level *</label>
+              <select formControlName="level" class="field-input field-select">
+                <option value="">Select level...</option>
+                <option *ngFor="let l of levels" [value]="l">{{ l }}</option>
+              </select>
             </div>
-          </form>
-        </mat-step>
+          </div>
 
-      </mat-stepper>
-    </mat-card-content>
-  </mat-card>
+          <div class="wizard-actions">
+            <button type="button" class="btn-ghost" (click)="closeWizard()">Cancel</button>
+            <button type="button" class="btn-primary-action" [disabled]="step1Form.invalid"
+              (click)="currentStep = 1">
+              Next: Pricing →
+            </button>
+          </div>
+        </form>
+      </div>
 
-  <!-- Courses Table -->
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+      <!-- Step 2: Pricing -->
+      <div *ngIf="currentStep === 1">
+        <form [formGroup]="step2Form" class="wizard-form">
+          <div class="field-group">
+            <label>Price (INR)</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">₹</span>
+              <input type="number" formControlName="price" min="0" class="field-input price-input"
+                placeholder="0 for free course">
+            </div>
+            <p class="field-hint">💡 Set to 0 to make this a free course available to all students</p>
+          </div>
 
-  <mat-table [dataSource]="courses" *ngIf="!isLoading" class="courses-table">
-    <ng-container matColumnDef="title">
-      <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
-      <mat-cell *matCellDef="let c">{{ c.title }}</mat-cell>
-    </ng-container>
+          <div class="pricing-preview">
+            <div class="preview-label">Preview</div>
+            <div class="preview-value">
+              {{ step2Form.value.price === 0 || !step2Form.value.price ? '🎁 Free' : '₹' + step2Form.value.price }}
+            </div>
+          </div>
 
-    <ng-container matColumnDef="state">
-      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-      <mat-cell *matCellDef="let c">
-        <mat-chip [color]="getStateColor(c.state)" selected>{{ c.state }}</mat-chip>
-      </mat-cell>
-    </ng-container>
+          <div class="wizard-actions">
+            <button type="button" class="btn-ghost" (click)="currentStep = 0">← Back</button>
+            <button type="button" class="btn-primary-action"
+              [disabled]="step2Form.invalid || isSubmitting"
+              (click)="createCourse()">
+              <span *ngIf="!isSubmitting">🚀 Create Course</span>
+              <span *ngIf="isSubmitting">Creating...</span>
+            </button>
+          </div>
+        </form>
+      </div>
 
-    <ng-container matColumnDef="enrollments">
-      <mat-header-cell *matHeaderCellDef>Students</mat-header-cell>
-      <mat-cell *matCellDef="let c">{{ c.enrollmentCount }}</mat-cell>
-    </ng-container>
+    </div>
+  </div>
 
-    <ng-container matColumnDef="price">
-      <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
-      <mat-cell *matCellDef="let c">
-        {{ c.price === 0 ? 'Free' : ('₹' + c.price) }}
-      </mat-cell>
-    </ng-container>
+  <!-- Loading -->
+  <div class="loading-wrap" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading your courses...</span>
+  </div>
 
-    <ng-container matColumnDef="actions">
-      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
-      <mat-cell *matCellDef="let c">
-        <a mat-icon-button [routerLink]="['/instructor/courses', c.id, 'curriculum']"
-           matTooltip="Curriculum">
-          <mat-icon>list</mat-icon>
-        </a>
-        <button mat-icon-button (click)="publish(c.id)"
-                *ngIf="c.state === 'Draft'" matTooltip="Publish">
-          <mat-icon>publish</mat-icon>
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && courses.length === 0">
+    <div class="empty-icon">📚</div>
+    <h3>No courses yet</h3>
+    <p>Create your first course and start teaching thousands of students.</p>
+    <button class="btn-create" (click)="openWizard()">+ Create Your First Course</button>
+  </div>
+
+  <!-- Courses Grid -->
+  <div class="courses-grid" *ngIf="!isLoading && courses.length > 0">
+    <div class="course-card" *ngFor="let course of courses">
+      <div class="course-card-header">
+        <div class="course-emoji">📘</div>
+        <span class="course-badge" [ngClass]="getStateBadgeClass(course.state)">{{ course.state }}</span>
+      </div>
+      <div class="course-card-body">
+        <h3 class="course-title">{{ course.title }}</h3>
+        <p class="course-desc">{{ course.description | slice:0:100 }}{{ (course.description || '').length > 100 ? '...' : '' }}</p>
+        <div class="course-meta">
+          <span class="meta-chip">{{ course.category }}</span>
+          <span class="meta-chip">{{ course.level }}</span>
+        </div>
+        <div class="course-stats">
+          <div class="stat-item">
+            <span class="stat-icon">👥</span>
+            <span>{{ course.enrollmentCount || 0 }} students</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">💰</span>
+            <span>{{ course.price === 0 ? 'Free' : '₹' + course.price }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-card-actions">
+        <button class="action-btn" (click)="navigateToCurriculum(course.id)" title="Edit Curriculum">
+          <span>📝</span> Curriculum
         </button>
-        <button mat-icon-button (click)="archive(c.id)"
-                *ngIf="c.state !== 'Archived'" matTooltip="Archive">
-          <mat-icon>archive</mat-icon>
+        <button class="action-btn action-btn-success" *ngIf="course.state === 'Draft'"
+          (click)="publish(course.id)" title="Publish">
+          <span>🚀</span> Publish
         </button>
-      </mat-cell>
-    </ng-container>
+        <button class="action-btn action-btn-warn" *ngIf="course.state !== 'Archived'"
+          (click)="archive(course.id)" title="Archive">
+          <span>📦</span> Archive
+        </button>
+      </div>
+    </div>
+  </div>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
 </div>

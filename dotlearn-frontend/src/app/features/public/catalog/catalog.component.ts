@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
 import { CourseService, Course } from '../services/course.service';
 
 @Component({
@@ -34,10 +35,18 @@ export class CatalogComponent implements OnInit, OnDestroy {
     { value: 'price_desc', label: 'Price: High to Low' },
   ];
 
-  constructor(private courseService: CourseService) {}
+  constructor(
+    private courseService: CourseService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    this.loadCourses();
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      if (params['category']) {
+        this.categoryControl.setValue(params['category'], { emitEvent: false });
+      }
+      this.loadCourses();
+    });
 
     this.searchControl.valueChanges.pipe(
       debounceTime(300),

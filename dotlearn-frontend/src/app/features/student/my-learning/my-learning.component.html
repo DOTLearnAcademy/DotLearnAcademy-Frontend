@@ -1,65 +1,91 @@
-<div class="my-learning">
-  <div class="page-header">
-    <h1>My Learning</h1>
-    <p>{{ enrollments.length }} courses enrolled</p>
+<div class="student-dashboard">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="greeting">
+        <div class="greeting-badge">📚 Student Portal</div>
+        <h1>Keep Learning, <span class="highlight">{{ studentName }}</span>!</h1>
+        <p>You have {{ enrollments.length }} course{{ enrollments.length !== 1 ? 's' : '' }} in progress. Keep it up!</p>
+      </div>
+      <div class="header-actions">
+        <a routerLink="/courses" class="btn-explore">
+          🔍 Explore More Courses
+        </a>
+      </div>
+    </div>
   </div>
 
-  <div class="filter-tabs">
-    <button mat-button [class.active]="activeTab === 'all'"
-            (click)="filter('all')">All</button>
-    <button mat-button [class.active]="activeTab === 'in-progress'"
-            (click)="filter('in-progress')">In Progress</button>
-    <button mat-button [class.active]="activeTab === 'completed'"
-            (click)="filter('completed')">Completed</button>
-  </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading" class="loading-bar"></mat-progress-bar>
 
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+  <div class="dashboard-body" *ngIf="!isLoading">
 
-  <div class="enrollment-grid" *ngIf="!isLoading">
-    <mat-card *ngFor="let enrollment of filteredEnrollments"
-              class="enrollment-card">
-      <mat-card-header>
-        <mat-card-title>Course {{ enrollment.courseId | slice:0:8 }}...</mat-card-title>
-        <mat-card-subtitle>
-          Enrolled {{ enrollment.enrolledAt | date:'mediumDate' }}
-        </mat-card-subtitle>
-      </mat-card-header>
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button class="tab-btn" [class.active]="activeTab === 'all'" (click)="filter('all')">
+        All Courses
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'in-progress'" (click)="filter('in-progress')">
+        🔄 In Progress
+      </button>
+      <button class="tab-btn" [class.active]="activeTab === 'completed'" (click)="filter('completed')">
+        ✅ Completed
+      </button>
+    </div>
 
-      <mat-card-content>
-        <div class="progress-section">
-          <div class="progress-ring">
-            <span class="progress-text">
-              {{ enrollment.progressPercent | number:'1.0-0' }}%
-            </span>
+    <!-- Course Grid -->
+    <div class="enrollment-grid" *ngIf="filteredEnrollments.length > 0">
+      <div class="enrollment-card" *ngFor="let enrollment of filteredEnrollments">
+        <div class="card-glow"></div>
+
+        <div class="card-header">
+          <div class="course-avatar">{{ getCourseInitial(enrollment.courseId) }}</div>
+          <div class="course-meta">
+            <div class="course-id">Course ID</div>
+            <div class="course-title">{{ enrollment.courseId | slice:0:12 }}...</div>
           </div>
-          <div class="progress-info">
-            <mat-progress-bar mode="determinate"
-              [value]="enrollment.progressPercent">
-            </mat-progress-bar>
-            <span class="lesson-count">
-              {{ enrollment.completedLessons }} /
-              {{ enrollment.totalLessons }} lessons
-            </span>
+          <div class="status-chip" [class]="enrollment.status === 'Completed' ? 'chip-completed' : 'chip-active'">
+            {{ enrollment.status === 'Completed' ? '✅' : '🔄' }} {{ enrollment.status }}
           </div>
         </div>
 
-        <mat-chip [color]="enrollment.status === 'Completed' ? 'accent' : 'primary'"
-                  selected>
-          {{ enrollment.status }}
-        </mat-chip>
-      </mat-card-content>
+        <div class="card-body">
+          <div class="progress-section">
+            <div class="progress-header">
+              <span class="progress-label">Progress</span>
+              <span class="progress-percent">{{ enrollment.progressPercent | number:'1.0-0' }}%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill"
+                   [style.width.%]="enrollment.progressPercent"
+                   [class]="enrollment.progressPercent === 100 ? 'fill-completed' : 'fill-active'">
+              </div>
+            </div>
+            <div class="lesson-count">
+              {{ enrollment.completedLessons }} / {{ enrollment.totalLessons }} lessons completed
+            </div>
+          </div>
+        </div>
 
-      <mat-card-actions>
-        <a mat-raised-button color="primary"
-           [routerLink]="['/student/lesson', enrollment.courseId]">
-          {{ enrollment.progressPercent > 0 ? 'Continue' : 'Start' }} Learning
-        </a>
-      </mat-card-actions>
-    </mat-card>
-
-    <div class="empty-state" *ngIf="filteredEnrollments.length === 0">
-      <mat-icon>school</mat-icon>
-      <p>No courses found. <a routerLink="/courses">Browse courses</a></p>
+        <div class="card-footer">
+          <div class="enrolled-date">
+            Enrolled {{ enrollment.enrolledAt | date:'mediumDate' }}
+          </div>
+          <a class="btn-continue"
+             [routerLink]="['/student/lesson', enrollment.courseId]">
+            {{ enrollment.progressPercent > 0 ? '▶ Continue' : '🚀 Start' }}
+          </a>
+        </div>
+      </div>
     </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredEnrollments.length === 0">
+      <div class="empty-icon">🎓</div>
+      <h3>No courses here yet</h3>
+      <p>Browse our catalog and start learning something new today!</p>
+      <a routerLink="/courses" class="btn-explore">Browse Courses</a>
+    </div>
+
   </div>
 </div>

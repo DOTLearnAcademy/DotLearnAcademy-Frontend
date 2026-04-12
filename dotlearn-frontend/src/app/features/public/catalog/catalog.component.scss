@@ -2,8 +2,8 @@
   display: grid;
   grid-template-columns: 280px 1fr;
   gap: 32px;
-  padding: 40px;
-  min-height: 100vh;
+  padding: 80px 40px 40px 40px; /* Increased top padding to clear sticky navbar perfectly */
+  min-height: calc(100vh - 68px);
 }
 
 .filters {
@@ -35,10 +35,20 @@
 
 .course-meta {
   display: flex;
-  gap: 16px;
-  color: #666;
+  justify-content: space-between;
+  align-items: center;
+  color: #64748b;
   font-size: 0.85rem;
-  margin-top: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+mat-paginator {
+  margin-top: 32px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .price {
