@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
@@ -12,7 +12,8 @@ interface Lesson {
   orderIndex: number;
   isPreview: boolean;
   durationSeconds?: number;
-  hasVideo?: boolean;
+  videoS3Key?: string;   // set by API after upload-confirm
+  textContent?: string;  // quiz JSON or text content
 }
 
 @Component({
@@ -33,7 +34,13 @@ export class CurriculumBuilderComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  // Video player modal
+  showVideoModal = false;
+  viewingVideoUrl = '';
+  viewingLessonTitle = '';
+
   lessonForm: FormGroup;
+  quizQuestions: FormArray;
   lessonTypes = ['Video', 'Text', 'Quiz'];
 
   constructor(
@@ -42,6 +49,7 @@ export class CurriculumBuilderComponent implements OnInit {
     private http: HttpClient,
     private fb: FormBuilder
   ) {
+    this.quizQuestions = this.fb.array([]);
     this.lessonForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       type: ['Video', Validators.required],
@@ -53,6 +61,26 @@ export class CurriculumBuilderComponent implements OnInit {
   ngOnInit() {
     this.courseId = this.route.snapshot.paramMap.get('id')!;
     this.loadLessons();
+  }
+
+  get isQuizType(): boolean {
+    return this.lessonForm.get('type')?.value === 'Quiz';
+  }
+
+  /** Quiz question FormArray helpers */
+  addQuestion() {
+    this.quizQuestions.push(this.fb.group({
+      question: ['', Validators.required],
+      optionA: ['', Validators.required],
+      optionB: ['', Validators.required],
+      optionC: [''],
+      optionD: [''],
+      correct: ['A', Validators.required]
+    }));
+  }
+
+  removeQuestion(index: number) {
+    this.quizQuestions.removeAt(index);
   }
 
   loadLessons() {
@@ -76,14 +104,25 @@ export class CurriculumBuilderComponent implements OnInit {
 
   addLesson() {
     if (this.lessonForm.invalid) return;
+    if (this.isQuizType && this.quizQuestions.length === 0) {
+      this.errorMessage = 'Please add at least one question for the quiz.';
+      return;
+    }
     this.isSubmittingLesson = true;
     this.errorMessage = '';
+
+    let textContent = '';
+    if (this.isQuizType) {
+      textContent = JSON.stringify(this.quizQuestions.value);
+    } else {
+      textContent = this.lessonForm.value.description || '';
+    }
 
     const payload = {
       title: this.lessonForm.value.title,
       type: this.lessonForm.value.type,
       isPreview: this.lessonForm.value.isPreview || false,
-      textContent: this.lessonForm.value.description || '',
+      textContent,
       orderIndex: this.lessons.length
     };
 
@@ -93,6 +132,7 @@ export class CurriculumBuilderComponent implements OnInit {
           this.isSubmittingLesson = false;
           this.showAddLesson = false;
           this.lessonForm.reset({ type: 'Video', isPreview: false });
+          this.quizQuestions.clear();
           this.successMessage = `Lesson "${payload.title}" added!`;
           setTimeout(() => this.successMessage = '', 3000);
           this.loadLessons();
@@ -138,7 +178,27 @@ export class CurriculumBuilderComponent implements OnInit {
     });
   }
 
+  viewVideo(lesson: Lesson) {
+    this.viewingLessonTitle = lesson.title;
+    this.viewingVideoUrl = '';
+    this.showVideoModal = true;
+    this.http.get<{ url: string }>(`${environment.apiUrl}/lessons/${lesson.id}/video-url`)
+      .subscribe({
+        next: res => { this.viewingVideoUrl = res.url; },
+        error: () => {
+          this.errorMessage = 'Could not load video.';
+          this.showVideoModal = false;
+        }
+      });
+  }
+
+  closeVideoModal() {
+    this.showVideoModal = false;
+    this.viewingVideoUrl = '';
+  }
+
   deleteLesson(lessonId: string) {
+    if (!confirm('Delete this lesson?')) return;
     this.http.delete(`${environment.apiUrl}/lessons/${lessonId}`)
       .subscribe({ next: () => this.loadLessons() });
   }
@@ -148,5 +208,9 @@ export class CurriculumBuilderComponent implements OnInit {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
     return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+
+  parseQuizQuestions(lesson: Lesson): any[] {
+    try { return JSON.parse(lesson.textContent || '[]'); } catch { return []; }
   }
 }
