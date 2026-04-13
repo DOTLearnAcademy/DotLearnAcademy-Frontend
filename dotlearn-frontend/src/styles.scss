@@ -170,3 +170,83 @@ select {
     padding: 20px 16px 40px;
   }
 }
+
+/* Dark Material Form Fields */
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-text-field-wrapper {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-radius: 16px !important;
+}
+
+.mdc-text-field--outlined .mdc-notched-outline__leading,
+.mdc-text-field--outlined .mdc-notched-outline__notch,
+.mdc-text-field--outlined .mdc-notched-outline__trailing {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+
+.mat-mdc-form-field:hover .mdc-notched-outline__leading,
+.mat-mdc-form-field:hover .mdc-notched-outline__notch,
+.mat-mdc-form-field:hover .mdc-notched-outline__trailing {
+  border-color: rgba(124, 108, 255, 0.28) !important;
+}
+
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__notch,
+.mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #7c6cff !important;
+}
+
+.mat-mdc-input-element,
+.mat-mdc-select-value,
+.mat-mdc-select-min-line {
+  color: #f8fbff !important;
+}
+
+.mat-mdc-form-field .mat-mdc-floating-label,
+.mat-mdc-form-field .mdc-floating-label {
+  color: #94a3b8 !important;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-floating-label,
+.mat-mdc-form-field.mat-focused .mdc-floating-label {
+  color: #c7c2ff !important;
+}
+
+.mat-mdc-select-arrow,
+.mat-mdc-form-field-icon-suffix,
+.mat-mdc-form-field-icon-prefix,
+.mat-mdc-select-placeholder {
+  color: #c9d6e6 !important;
+}
+
+.mat-mdc-option {
+  color: #f8fbff !important;
+  background: #0f1b2d !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+  background: rgba(124, 108, 255, 0.14) !important;
+}
+
+div.mat-mdc-select-panel {
+  background: #0f1b2d !important;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  border-radius: 16px !important;
+}
+
+.mat-mdc-paginator,
+.mat-mdc-table,
+.mat-mdc-header-row,
+.mat-mdc-row {
+  background: transparent !important;
+  color: #f8fbff !important;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  color: #c9d6e6 !important;
+  border-bottom-color: rgba(148, 163, 184, 0.12) !important;
+}

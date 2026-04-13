@@ -5,10 +5,9 @@ import { environment } from '../../../../environments/environment';
 interface Certificate {
   id: string;
   courseId: string;
-  studentId: string;
   verificationCode: string;
-  certificateUrl: string;
   createdAt: string;
+  pdfUrl?: string;
 }
 
 @Component({
@@ -24,19 +23,48 @@ export class CertificatesComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http.get<Certificate[]>(`${environment.apiUrl}/certificates/my`)
+    const userProfileRaw =
+      localStorage.getItem('userProfile') || localStorage.getItem('currentUser');
+
+    if (!userProfileRaw) {
+      this.isLoading = false;
+      return;
+    }
+
+    let userId = '';
+    try {
+      userId = JSON.parse(userProfileRaw).id || '';
+    } catch {
+      this.isLoading = false;
+      return;
+    }
+
+    if (!userId) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.http.get<Certificate[]>(`${environment.apiUrl}/certificates/student/${userId}`)
       .subscribe({
-        next: data => { this.certificates = data; this.isLoading = false; },
-        error: () => { this.isLoading = false; }
+        next: data => {
+          this.certificates = data ?? [];
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+        }
       });
   }
 
   download(cert: Certificate) {
-    window.open(cert.certificateUrl, '_blank');
+    if (cert.pdfUrl) {
+      window.open(cert.pdfUrl, '_blank');
+    }
   }
 
   shareLinkedIn(cert: Certificate) {
-    const url = encodeURIComponent(cert.certificateUrl);
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+    const text = `I earned a DOTLearn certificate! Verification Code: ${cert.verificationCode}`;
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin)}&summary=${encodeURIComponent(text)}`;
+    window.open(linkedInUrl, '_blank');
   }
 }

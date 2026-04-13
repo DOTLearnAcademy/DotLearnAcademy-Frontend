@@ -24,18 +24,36 @@ export class PurchaseHistoryComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+    const userProfileRaw =
+      localStorage.getItem('userProfile') || localStorage.getItem('currentUser');
 
-    this.http.get<Payment[]>(
-      `${environment.apiUrl}/payments/student/${user.id}`
-    ).subscribe({
-      next: data => {
-        this.payments = data;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-      }
-    });
+    if (!userProfileRaw) {
+      this.isLoading = false;
+      return;
+    }
+
+    let userId = '';
+    try {
+      userId = JSON.parse(userProfileRaw).id || '';
+    } catch {
+      this.isLoading = false;
+      return;
+    }
+
+    if (!userId) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.http.get<Payment[]>(`${environment.apiUrl}/payments/student/${userId}`)
+      .subscribe({
+        next: data => {
+          this.payments = data ?? [];
+          this.isLoading = false;
+        },
+        error: () => {
+          this.isLoading = false;
+        }
+      });
   }
 }
