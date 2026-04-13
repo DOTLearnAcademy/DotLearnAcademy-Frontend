@@ -28,8 +28,6 @@ export class MyLearningComponent implements OnInit {
 
     this.enrollments = [];
     this.filter('all');
-    this.isLoading = false;
-    /*
     this.enrollmentService.getMyEnrollments().subscribe({
       next: data => {
         this.enrollments = data;
@@ -38,7 +36,6 @@ export class MyLearningComponent implements OnInit {
       },
       error: () => { this.isLoading = false; }
     });
-    */
   }
 
   filter(tab: string) {
