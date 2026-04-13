@@ -132,9 +132,9 @@ export class LessonPlayerComponent implements OnInit, OnDestroy {
     const completed = [...this.completedLessonIds].filter(id => this.lessons.some(l => l.id === id)).length;
     this.progressPercent = Math.round((completed / this.lessons.length) * 100);
 
-    // Sync with enrollment service
+    // Sync with enrollment service via authenticated student endpoint
     if (this.enrollmentId) {
-      this.http.put(`${environment.apiUrl}/internal/enrollments/${this.enrollmentId}/progress`, {
+      this.http.put(`${environment.apiUrl}/enrollments/${this.enrollmentId}/progress`, {
         completedLessons: completed,
         totalLessons: this.lessons.length
       }).subscribe();
