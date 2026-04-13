@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { timeout } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 
 interface Lesson {
@@ -182,12 +183,14 @@ export class CurriculumBuilderComponent implements OnInit {
     this.viewingLessonTitle = lesson.title;
     this.viewingVideoUrl = '';
     this.showVideoModal = true;
-    this.http.get<{ url: string }>(`${environment.apiUrl}/lessons/${lesson.id}/video-url`)
+    // API returns { videoUrl: '...' } — NOT { url: '...' }
+    this.http.get<{ videoUrl: string }>(`${environment.apiUrl}/lessons/${lesson.id}/video-url`)
+      .pipe(timeout(15000))
       .subscribe({
-        next: res => { this.viewingVideoUrl = res.url; },
+        next: res => { this.viewingVideoUrl = res.videoUrl; },
         error: () => {
-          this.errorMessage = 'Could not load video.';
           this.showVideoModal = false;
+          this.errorMessage = 'Could not load video. Please try again.';
         }
       });
   }
