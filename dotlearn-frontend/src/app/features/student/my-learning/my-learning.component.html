@@ -72,7 +72,8 @@
             Enrolled {{ enrollment.enrolledAt | date:'mediumDate' }}
           </div>
           <a class="btn-continue"
-             [routerLink]="['/student/courses', enrollment.courseId, 'learn']">
+             [routerLink]="['/student/courses', enrollment.courseId, 'learn']"
+             [queryParams]="{ enrollmentId: enrollment.id }">
             {{ enrollment.progressPercent > 0 ? '▶ Continue' : '🚀 Start' }}
           </a>
         </div>

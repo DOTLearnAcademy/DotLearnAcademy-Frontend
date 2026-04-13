@@ -47,11 +47,13 @@ export class MyLearningComponent implements OnInit {
   }
 
   fetchCourseNames(courseIds: string[]) {
-    this.http.get<any[]>(`${environment.apiUrl}/courses`)
-      .pipe(catchError(() => of([])))
-      .subscribe(courses => {
+    this.http.get<any>(`${environment.apiUrl}/courses`)
+      .pipe(catchError(() => of({ items: [] })))
+      .subscribe(res => {
+        // API returns paginated {items:[...]} or plain array
+        const courses: any[] = Array.isArray(res) ? res : (res.items || []);
         const map: Record<string, string> = {};
-        courses.forEach(c => map[c.id] = c.title);
+        courses.forEach((c: any) => map[c.id] = c.title);
         this.courseNames = map;
       });
   }
