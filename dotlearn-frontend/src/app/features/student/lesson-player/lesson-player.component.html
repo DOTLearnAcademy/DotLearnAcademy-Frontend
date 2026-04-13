@@ -155,9 +155,9 @@
                     <button
                       type="button"
                       class="quiz-option"
-                      *ngFor="let opt of q.options"
-                      [class.selected]="selectedAnswers[q.id] === opt.key"
-                      (click)="selectAnswer(q.id, opt.key)">
+                      *ngFor="let opt of getOptions(q)"
+                      [class.selected]="selectedAnswers[qi] === opt.key"
+                      (click)="selectAnswer(qi, opt.key)">
                       <span class="option-key">{{ opt.key }}</span>
                       <span class="option-text">{{ opt.val }}</span>
                     </button>

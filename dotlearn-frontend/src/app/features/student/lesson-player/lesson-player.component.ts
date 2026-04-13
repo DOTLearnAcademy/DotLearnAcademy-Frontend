@@ -31,6 +31,7 @@ interface QuizQuestion {
 })
 export class LessonPlayerComponent implements OnInit, OnDestroy {
   courseId = '';
+  courseTitle = '';
   enrollmentId: string | null = null;
 
   lessons: CourseLesson[] = [];

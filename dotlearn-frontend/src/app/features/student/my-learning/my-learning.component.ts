@@ -33,11 +33,11 @@ export class MyLearningComponent implements OnInit {
     }
 
     this.enrollments = [];
-    this.filter('all');
+    this.setTab('all');
     this.enrollmentService.getMyEnrollments().subscribe({
       next: data => {
         this.enrollments = data;
-        this.filter('all');
+        this.setTab('all');
         this.isLoading = false;
         // Fetch course names for all enrolled courses
         this.fetchCourseNames(data.map(e => e.courseId));
@@ -62,7 +62,7 @@ export class MyLearningComponent implements OnInit {
     return this.courseNames[courseId] || 'Loading...';
   }
 
-  filter(tab: string) {
+  setTab(tab: string) {
     this.activeTab = tab;
     this.filteredEnrollments = this.enrollments.filter(e => {
       if (tab === 'all') return true;

@@ -13,6 +13,7 @@ import { AuthService } from '../../auth/services/auth.service';
 })
 export class CourseDetailComponent implements OnInit {
   course: Course | null = null;
+  lessons: any[] = [];
   isLoading = true;
   isEnrolling = false;
   userRole = '';
@@ -29,7 +30,11 @@ export class CourseDetailComponent implements OnInit {
     this.userRole = this.authService.getRole();
     const id = this.route.snapshot.paramMap.get('id')!;
     this.courseService.getById(id).subscribe({
-      next: course => { this.course = course; this.isLoading = false; },
+      next: course => { 
+        this.course = course; 
+        this.lessons = (course as any).lessons || [];
+        this.isLoading = false; 
+      },
       error: () => { this.isLoading = false; }
     });
   }

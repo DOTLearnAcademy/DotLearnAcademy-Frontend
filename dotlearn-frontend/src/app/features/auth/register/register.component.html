@@ -14,7 +14,7 @@
 
     <!-- Right -->
     <div class="auth-form-wrap">
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card">
         <h2>Create account</h2>
         <p class="subtext">Start learning in minutes</p>
 
@@ -33,7 +33,7 @@
           <input matInput formControlName="password" type="password">
         </mat-form-field>
 
-        <button type="submit" class="primary-btn" [disabled]="registerForm.invalid || isLoading">
+        <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading">
           <mat-icon>person_add</mat-icon>
           <span>{{ isLoading ? 'Creating...' : 'Create Account' }}</span>
         </button>
