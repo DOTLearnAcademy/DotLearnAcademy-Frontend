@@ -52,9 +52,10 @@ export class LessonPlayerComponent implements OnInit, OnDestroy {
   // Progress & Certificate
   progressPercent = 0;
   showCertificate = false;
-  certificateDate = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  certificateDate = new Date().toLocaleDateString('en-IN', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
 
-  private heartbeat: any;
   private localStorageKey = '';
 
   constructor(
@@ -67,14 +68,32 @@ export class LessonPlayerComponent implements OnInit, OnDestroy {
     this.enrollmentId = this.route.snapshot.queryParamMap.get('enrollmentId');
     this.localStorageKey = `completed_${this.courseId}`;
 
-    // Restore completed lessons from localStorage
+    // Restore completed lessons from localStorage first
     const saved = localStorage.getItem(this.localStorageKey);
     if (saved) {
       try { this.completedLessonIds = new Set(JSON.parse(saved)); } catch { }
     }
 
-    this.loadLessons();
+    // Always fetch enrollment from backend to get latest progress and enrollmentId
+    this.http.get<any[]>(`${environment.apiUrl}/enrollments/my`).subscribe({
+      next: (enrollments) => {
+        const e = enrollments.find(en => en.courseId === this.courseId);
+        if (e) {
+          // Override with the real enrollmentId (handles direct navigation / page refresh)
+          this.enrollmentId = e.id;
+          // If localStorage is empty but backend has progress, restore it
+          if (this.completedLessonIds.size === 0 && e.completedLessons > 0) {
+            // We'll restore after lessons load (we need lesson IDs)
+            this._backendCompletedCount = e.completedLessons;
+          }
+        }
+        this.loadLessons();
+      },
+      error: () => this.loadLessons() // load lessons even without enrollment info
+    });
   }
+
+  private _backendCompletedCount = 0;
 
   loadLessons() {
     this.isLoading = true;
@@ -83,10 +102,21 @@ export class LessonPlayerComponent implements OnInit, OnDestroy {
         next: data => {
           this.lessons = data.sort((a, b) => a.orderIndex - b.orderIndex);
           this.isLoading = false;
+
+          // Restore progress from backend if localStorage was empty
+          if (this.completedLessonIds.size === 0 && this._backendCompletedCount > 0) {
+            const toRestore = this.lessons.slice(0, this._backendCompletedCount);
+            this.completedLessonIds = new Set(toRestore.map(l => l.id));
+            localStorage.setItem(this.localStorageKey,
+              JSON.stringify([...this.completedLessonIds]));
+          }
+
           this.updateProgress();
+
           if (this.lessons.length > 0) {
             // Resume at first incomplete lesson
-            const first = this.lessons.find(l => !this.completedLessonIds.has(l.id)) || this.lessons[0];
+            const first = this.lessons.find(l =>
+              !this.completedLessonIds.has(l.id)) ?? this.lessons[0];
             this.selectLesson(first);
           }
         },
@@ -123,21 +153,25 @@ export class LessonPlayerComponent implements OnInit, OnDestroy {
   markLessonComplete(lesson: CourseLesson) {
     if (this.completedLessonIds.has(lesson.id)) return;
     this.completedLessonIds.add(lesson.id);
-    localStorage.setItem(this.localStorageKey, JSON.stringify([...this.completedLessonIds]));
+    localStorage.setItem(this.localStorageKey,
+      JSON.stringify([...this.completedLessonIds]));
     this.updateProgress();
   }
 
   updateProgress() {
     if (this.lessons.length === 0) { this.progressPercent = 0; return; }
-    const completed = [...this.completedLessonIds].filter(id => this.lessons.some(l => l.id === id)).length;
+    const completed = [...this.completedLessonIds]
+      .filter(id => this.lessons.some(l => l.id === id)).length;
     this.progressPercent = Math.round((completed / this.lessons.length) * 100);
 
-    // Sync with enrollment service via authenticated student endpoint
+    // Sync to enrollment service (requires enrollmentId and JWT token)
     if (this.enrollmentId) {
-      this.http.put(`${environment.apiUrl}/enrollments/${this.enrollmentId}/progress`, {
-        completedLessons: completed,
-        totalLessons: this.lessons.length
-      }).subscribe();
+      this.http.put(
+        `${environment.apiUrl}/enrollments/${this.enrollmentId}/progress`,
+        { completedLessons: completed, totalLessons: this.lessons.length }
+      ).subscribe({
+        error: (err) => console.warn('Progress sync failed:', err.status, err.message)
+      });
     }
 
     if (this.progressPercent >= 100) {
@@ -161,8 +195,6 @@ export class LessonPlayerComponent implements OnInit, OnDestroy {
     this.quizScore = this.quizQuestions.length
       ? Math.round((correct / this.quizQuestions.length) * 100)
       : 0;
-
-    // Auto-mark quiz complete when submitted
     if (this.selectedLesson) this.markLessonComplete(this.selectedLesson);
   }
 
@@ -191,7 +223,5 @@ export class LessonPlayerComponent implements OnInit, OnDestroy {
     return '📋';
   }
 
-  ngOnDestroy() {
-    if (this.heartbeat) clearInterval(this.heartbeat);
-  }
+  ngOnDestroy() {}
 }
