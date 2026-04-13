@@ -24,7 +24,8 @@ import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
   { path: 'my-learning', component: MyLearningComponent },
-  { path: 'lesson/:id', component: LessonPlayerComponent },
+  { path: 'courses/:courseId/learn', component: LessonPlayerComponent }, // Course viewer
+  { path: 'lesson/:id', redirectTo: 'my-learning' },                     // old route - redirect
   { path: 'quiz/:id', component: QuizComponent },
   { path: 'certificates', component: CertificatesComponent },
   { path: 'purchases', component: PurchaseHistoryComponent },

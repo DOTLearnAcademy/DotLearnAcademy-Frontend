@@ -1,43 +1,137 @@
-<div class="player-layout">
-  <main class="player-main">
-    <div class="video-container" *ngIf="!isLoading">
-      <video controls class="video-player" [src]="videoUrl"
-             *ngIf="videoUrl">
-        Your browser does not support the video tag.
-      </video>
-      <div class="no-video" *ngIf="!videoUrl">
-        <mat-icon>play_circle_outline</mat-icon>
-        <p>Video not available</p>
+<div class="course-viewer">
+
+  <!-- Loading -->
+  <div class="viewer-loading" *ngIf="isLoading">
+    <div class="spin"></div>
+    <span>Loading course content...</span>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ── Sidebar ── -->
+    <aside class="curriculum-sidebar">
+      <div class="sidebar-header">
+        <h3>📚 Curriculum</h3>
+        <span class="lesson-count">{{ lessons.length }} lessons</span>
       </div>
-    </div>
-    <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+      <div class="lesson-list">
+        <div class="lesson-item"
+          *ngFor="let lesson of lessons; let i = index"
+          [class.active]="selectedLesson?.id === lesson.id"
+          (click)="selectLesson(lesson)">
+          <span class="lesson-icon">{{ getLessonIcon(lesson.type) }}</span>
+          <div class="lesson-info">
+            <div class="lesson-title">{{ lesson.title }}</div>
+            <div class="lesson-meta">
+              <span class="type-label">{{ lesson.type }}</span>
+              <span class="duration" *ngIf="lesson.durationSeconds">{{ formatDuration(lesson.durationSeconds) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-    <mat-tab-group class="lesson-tabs">
-      <mat-tab label="Overview">
-        <div class="tab-content">
-          <p>Lesson content and description will appear here.</p>
-        </div>
-      </mat-tab>
-      <mat-tab label="Q&A">
-        <div class="tab-content">
-          <p>Discussion forum for this lesson.</p>
-        </div>
-      </mat-tab>
-      <mat-tab label="Notes">
-        <div class="tab-content">
-          <p>Your personal notes for this lesson.</p>
-        </div>
-      </mat-tab>
-    </mat-tab-group>
-  </main>
+    <!-- ── Main Content ── -->
+    <main class="viewer-main" *ngIf="selectedLesson">
 
-  <aside class="curriculum-sidebar">
-    <h3>Curriculum</h3>
-    <mat-list>
-      <mat-list-item>
-        <mat-icon matListItemIcon>play_circle</mat-icon>
-        <span matListItemTitle>Current Lesson</span>
-      </mat-list-item>
-    </mat-list>
-  </aside>
+      <!-- ── VIDEO LESSON ── -->
+      <ng-container *ngIf="selectedLesson.type === 'Video'">
+        <div class="video-area">
+          <div class="video-loading-state" *ngIf="isLoadingContent">
+            <div class="spin"></div>
+            <p>Loading video...</p>
+          </div>
+          <div class="no-video-state" *ngIf="!isLoadingContent && !videoUrl && !selectedLesson.videoS3Key">
+            <span class="no-video-icon">🎬</span>
+            <p>No video uploaded yet for this lesson.</p>
+          </div>
+          <video *ngIf="videoUrl && !isLoadingContent"
+                 [src]="videoUrl" controls class="video-player" autoplay>
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div class="lesson-detail-panel">
+          <h2 class="lesson-heading">{{ selectedLesson.title }}</h2>
+        </div>
+      </ng-container>
+
+      <!-- ── QUIZ LESSON ── -->
+      <ng-container *ngIf="selectedLesson.type === 'Quiz'">
+        <div class="quiz-area">
+          <div class="quiz-header">
+            <h2>❓ {{ selectedLesson.title }}</h2>
+            <span class="quiz-meta" *ngIf="quizQuestions.length">{{ quizQuestions.length }} Question{{ quizQuestions.length !== 1 ? 's' : '' }}</span>
+          </div>
+
+          <div class="no-quiz" *ngIf="quizQuestions.length === 0">
+            <span>📋</span>
+            <p>No questions found for this quiz.</p>
+          </div>
+
+          <!-- Score Banner -->
+          <div class="score-banner" *ngIf="quizSubmitted">
+            <ng-container *ngIf="quizScore >= 70">
+              🎉 Great job! You scored <strong>{{ quizScore }}%</strong>
+            </ng-container>
+            <ng-container *ngIf="quizScore < 70">
+              📖 You scored <strong>{{ quizScore }}%</strong> — keep practicing!
+            </ng-container>
+          </div>
+
+          <!-- Questions -->
+          <div class="question-block" *ngFor="let q of quizQuestions; let qi = index">
+            <div class="q-heading">
+              <span class="q-num">Q{{ qi + 1 }}</span>
+              {{ q.question }}
+            </div>
+            <div class="options-list">
+              <ng-container *ngFor="let opt of getOptions(q)">
+                <button class="option-btn"
+                  *ngIf="opt.val"
+                  [class.selected]="selectedAnswers[qi] === opt.key"
+                  [class.correct]="quizSubmitted && opt.key === q.correct"
+                  [class.wrong]="quizSubmitted && selectedAnswers[qi] === opt.key && opt.key !== q.correct"
+                  (click)="selectAnswer(qi, opt.key)">
+                  <span class="opt-letter">{{ opt.key }}</span>
+                  {{ opt.val }}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+          <button class="btn-submit-quiz"
+            *ngIf="quizQuestions.length > 0 && !quizSubmitted"
+            (click)="submitQuiz()">
+            Submit Quiz
+          </button>
+        </div>
+      </ng-container>
+
+      <!-- ── TEXT / NOTES LESSON ── -->
+      <ng-container *ngIf="selectedLesson.type === 'Text' || selectedLesson.type === 'PDF'">
+        <div class="text-area">
+          <h2>{{ selectedLesson.title }}</h2>
+          <div class="text-content"
+               *ngIf="selectedLesson.textContent; else noText">
+            <p>{{ selectedLesson.textContent }}</p>
+          </div>
+          <ng-template #noText>
+            <p class="no-content">No text content available for this lesson.</p>
+          </ng-template>
+        </div>
+      </ng-container>
+
+    </main>
+
+    <!-- Empty state when no lessons -->
+    <main class="viewer-main empty-main" *ngIf="!selectedLesson && lessons.length === 0">
+      <div class="empty-viewer">
+        <span class="empty-icon">📭</span>
+        <h3>No lessons yet</h3>
+        <p>The instructor hasn't added any content to this course yet.</p>
+      </div>
+    </main>
+
+  </ng-container>
+
 </div>

@@ -41,8 +41,8 @@
         <div class="card-header">
           <div class="course-avatar">{{ getCourseInitial(enrollment.courseId) }}</div>
           <div class="course-meta">
-            <div class="course-id">Course ID</div>
-            <div class="course-title">{{ enrollment.courseId | slice:0:12 }}...</div>
+            <div class="course-name-label">Course</div>
+            <div class="course-title">{{ getCourseName(enrollment.courseId) }}</div>
           </div>
           <div class="status-chip" [class]="enrollment.status === 'Completed' ? 'chip-completed' : 'chip-active'">
             {{ enrollment.status === 'Completed' ? '✅' : '🔄' }} {{ enrollment.status }}
@@ -72,7 +72,7 @@
             Enrolled {{ enrollment.enrolledAt | date:'mediumDate' }}
           </div>
           <a class="btn-continue"
-             [routerLink]="['/student/lesson', enrollment.courseId]">
+             [routerLink]="['/student/courses', enrollment.courseId, 'learn']">
             {{ enrollment.progressPercent > 0 ? '▶ Continue' : '🚀 Start' }}
           </a>
         </div>

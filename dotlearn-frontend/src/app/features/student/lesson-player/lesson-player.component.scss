@@ -1,35 +1,392 @@
-.player-layout {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  height: calc(100vh - 64px);
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+.course-viewer {
+  display: flex;
+  height: calc(100vh - 68px);
+  background: #070b1e;
+  font-family: 'Outfit', sans-serif;
+  overflow: hidden;
 }
 
-.player-main { overflow-y: auto; }
-
-.video-container {
-  background: #000;
-  width: 100%;
-  aspect-ratio: 16/9;
-}
-
-.video-player { width: 100%; height: 100%; }
-
-.no-video {
+/* ── Loading ── */
+.viewer-loading {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  color: white;
-  mat-icon { font-size: 4rem; }
+  gap: 16px;
+  color: #64748b;
+  font-size: 1rem;
 }
 
-.lesson-tabs { padding: 16px; }
-.tab-content { padding: 16px 0; }
-
+/* ── Sidebar ── */
 .curriculum-sidebar {
-  border-left: 1px solid #e0e0e0;
+  width: 300px;
+  flex-shrink: 0;
+  background: #0a0e27;
+  border-right: 1px solid rgba(99, 102, 241, 0.12);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0;
+  }
+}
+
+.lesson-count {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.lesson-list {
+  flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  h3 { color: #1E3A5F; margin-bottom: 16px; }
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 102, 241, 0.2) transparent;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.2); border-radius: 2px; }
+}
+
+.lesson-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
+
+  &:hover { background: rgba(99, 102, 241, 0.06); }
+  &.active {
+    background: rgba(99, 102, 241, 0.12);
+    border-left: 3px solid #6366f1;
+  }
+}
+
+.lesson-icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.lesson-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.lesson-title {
+  font-size: 0.87rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  .lesson-item.active & { color: #a5b4fc; }
+}
+
+.lesson-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.type-label {
+  font-size: 0.7rem;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.duration {
+  font-size: 0.7rem;
+  color: #475569;
+}
+
+/* ── Main ── */
+.viewer-main {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-main {
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-viewer {
+  text-align: center;
+  color: #475569;
+
+  .empty-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+  h3 { color: #94a3b8; margin-bottom: 8px; }
+  p { font-size: 0.9rem; }
+}
+
+/* ── Video ── */
+.video-area {
+  background: #000;
+  aspect-ratio: 16/9;
+  max-height: 65vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-player {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.video-loading-state,
+.no-video-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #64748b;
+  font-size: 0.9rem;
+
+  .no-video-icon { font-size: 2.5rem; }
+}
+
+.lesson-detail-panel {
+  padding: 24px 32px;
+
+  .lesson-heading {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0;
+  }
+}
+
+/* ── Quiz ── */
+.quiz-area {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.quiz-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0;
+  }
+}
+
+.quiz-meta {
+  font-size: 0.8rem;
+  color: #64748b;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.no-quiz {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px;
+  color: #475569;
+  font-size: 1.8rem;
+
+  p { font-size: 0.9rem; }
+}
+
+.score-banner {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.1));
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 1rem;
+  color: #e2e8f0;
+
+  strong { color: #a5b4fc; font-size: 1.2rem; }
+}
+
+.question-block {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.q-heading {
+  display: flex;
+  gap: 12px;
+  font-size: 1rem;
+  color: #e2e8f0;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.q-num {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #818cf8;
+  background: rgba(99, 102, 241, 0.15);
+  padding: 2px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  height: fit-content;
+}
+
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  border-radius: 10px;
+  color: #94a3b8;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.18s;
+
+  &:hover:not(.correct):not(.wrong) {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: #e2e8f0;
+  }
+
+  &.selected:not(.correct):not(.wrong) {
+    background: rgba(99, 102, 241, 0.15);
+    border-color: rgba(99, 102, 241, 0.4);
+    color: #a5b4fc;
+  }
+
+  &.correct {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #34d399;
+  }
+
+  &.wrong {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.35);
+    color: #f87171;
+  }
+}
+
+.opt-letter {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(99, 102, 241, 0.15);
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #818cf8;
+  flex-shrink: 0;
+
+  .correct & { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+  .wrong & { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+}
+
+.btn-submit-quiz {
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.88; }
+}
+
+/* ── Text ── */
+.text-area {
+  padding: 32px;
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 16px;
+  }
+}
+
+.text-content {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.no-content {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+/* ── Spinner ── */
+.spin {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(99, 102, 241, 0.15);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .course-viewer { flex-direction: column; height: auto; }
+  .curriculum-sidebar { width: 100%; height: 220px; border-right: none; border-bottom: 1px solid rgba(99, 102, 241, 0.12); }
+  .video-area { max-height: 50vw; }
 }

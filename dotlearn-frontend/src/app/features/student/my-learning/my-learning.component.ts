@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { EnrollmentService, Enrollment } from '../services/enrollment.service';
 import { AuthService } from '../../auth/services/auth.service';
+import { environment } from '../../../../environments/environment';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-learning',
@@ -11,13 +15,15 @@ import { AuthService } from '../../auth/services/auth.service';
 export class MyLearningComponent implements OnInit {
   enrollments: Enrollment[] = [];
   filteredEnrollments: Enrollment[] = [];
+  courseNames: Record<string, string> = {};
   activeTab = 'all';
   isLoading = true;
   studentName = 'Student';
 
   constructor(
     private enrollmentService: EnrollmentService,
-    private authService: AuthService
+    private authService: AuthService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -33,9 +39,25 @@ export class MyLearningComponent implements OnInit {
         this.enrollments = data;
         this.filter('all');
         this.isLoading = false;
+        // Fetch course names for all enrolled courses
+        this.fetchCourseNames(data.map(e => e.courseId));
       },
       error: () => { this.isLoading = false; }
     });
+  }
+
+  fetchCourseNames(courseIds: string[]) {
+    this.http.get<any[]>(`${environment.apiUrl}/courses`)
+      .pipe(catchError(() => of([])))
+      .subscribe(courses => {
+        const map: Record<string, string> = {};
+        courses.forEach(c => map[c.id] = c.title);
+        this.courseNames = map;
+      });
+  }
+
+  getCourseName(courseId: string): string {
+    return this.courseNames[courseId] || 'Loading...';
   }
 
   filter(tab: string) {
@@ -50,6 +72,7 @@ export class MyLearningComponent implements OnInit {
   }
 
   getCourseInitial(courseId: string): string {
-    return courseId ? courseId[0].toUpperCase() : 'C';
+    const name = this.courseNames[courseId];
+    return name ? name[0].toUpperCase() : courseId[0].toUpperCase();
   }
 }
