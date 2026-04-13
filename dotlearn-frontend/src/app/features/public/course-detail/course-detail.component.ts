@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CourseService, Course } from '../services/course.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-course-detail',
@@ -14,15 +15,18 @@ export class CourseDetailComponent implements OnInit {
   course: Course | null = null;
   isLoading = true;
   isEnrolling = false;
+  userRole = '';
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private courseService: CourseService,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.userRole = this.authService.getRole();
     const id = this.route.snapshot.paramMap.get('id')!;
     this.courseService.getById(id).subscribe({
       next: course => { this.course = course; this.isLoading = false; },

@@ -25,6 +25,7 @@
           {{ course.price === 0 ? 'Free' : ('₹' + course.price) }}
         </div>
         <button mat-raised-button color="primary" class="full-width enroll-btn"
+                *ngIf="userRole !== 'Instructor'"
                 (click)="enroll()" [disabled]="isEnrolling">
           {{ course.price === 0 ? 'Enroll for Free' : 'Buy Now' }}
         </button>

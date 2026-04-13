@@ -8,6 +8,23 @@
 
 .filters {
   h3 { font-size: 1.2rem; color: var(--color-text-main); margin-bottom: 16px; }
+  
+  ::ng-deep .mat-mdc-text-field-wrapper,
+  ::ng-deep .mat-mdc-select-trigger {
+    background: var(--glass-bg);
+    backdrop-filter: var(--backdrop-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    transition: all 0.4s ease;
+  }
+  
+  ::ng-deep .mdc-text-field--focused .mat-mdc-text-field-wrapper,
+  ::ng-deep .mat-focused .mat-mdc-select-trigger {
+    background: rgba(126, 34, 206, 0.1);
+    border-color: #c084fc;
+    box-shadow: 0 0 0 4px rgba(126, 34, 206, 0.2), 0 0 20px rgba(126, 34, 206, 0.4);
+    outline: none;
+  }
 }
 
 .full-width { width: 100%; margin-bottom: 16px; }
@@ -29,8 +46,28 @@
 
 .course-card {
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  &:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  background: var(--glass-bg);
+  box-shadow: 0 -10px 40px rgba(126, 34, 206, 0.15), var(--shadow-soft);
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    box-shadow: inset 0 -20px 20px -20px rgba(6, 182, 212, 0.5);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
 }
 
 .course-meta {
@@ -42,6 +79,16 @@
   margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid rgba(255,255,255,0.1);
+  
+  span:first-child {
+    display: inline-block;
+  }
+}
+
+.course-card:hover .course-meta span:first-child {
+  animation: sparkleStar 1s ease infinite;
+  color: var(--color-accent-gold);
+  text-shadow: 0 0 10px var(--color-accent-gold);
 }
 
 mat-paginator {
@@ -53,7 +100,8 @@ mat-paginator {
 }
 
 .price {
-  font-weight: bold;
-  color: #a78bfa; /* subtle purple/indigo */
-  font-size: 1.1rem;
+  font-weight: 800;
+  color: #c084fc;
+  font-size: 1.2rem;
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.6);
 }

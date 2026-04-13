@@ -408,22 +408,39 @@ textarea.field-input { resize: vertical; min-height: 100px; }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
 
   &.badge-published {
     background: rgba(16, 185, 129, 0.12);
     border: 1px solid rgba(16, 185, 129, 0.3);
     color: #34d399;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.2) inset;
   }
   &.badge-draft {
-    background: rgba(251, 191, 36, 0.12);
-    border: 1px solid rgba(251, 191, 36, 0.3);
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(251, 191, 36, 0.1),
+      rgba(251, 191, 36, 0.1) 5px,
+      rgba(251, 191, 36, 0.2) 5px,
+      rgba(251, 191, 36, 0.2) 10px
+    );
+    border: 1px dashed #fbbf24;
     color: #fbbf24;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    animation: stitchMove 20s linear infinite;
   }
   &.badge-archived {
     background: rgba(100, 116, 139, 0.15);
     border: 1px solid rgba(100, 116, 139, 0.3);
     color: #94a3b8;
+    backdrop-filter: blur(4px);
   }
+}
+
+@keyframes stitchMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 100px 0; }
 }
 
 .course-card-body {
@@ -489,34 +506,58 @@ textarea.field-input { resize: vertical; min-height: 100px; }
   justify-content: center;
   gap: 6px;
   padding: 8px 14px;
-  background: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.2);
+  background: transparent;
+  border: 1px solid var(--glass-border-light);
   border-radius: 8px;
-  color: #818cf8;
+  color: var(--color-text-main);
   font-family: 'Outfit', sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+
+  /* Wireframe overlay glow */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 0 0 1px rgba(126, 34, 206, 0);
+    transition: all 0.3s;
+    border-radius: inherit;
+  }
 
   &:hover {
-    background: rgba(99, 102, 241, 0.15);
-    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(126, 34, 206, 0.1);
+    color: #c084fc;
+    border-color: #9333ea;
+    box-shadow: 0 0 15px rgba(147, 51, 234, 0.4);
+    
+    &::after {
+      box-shadow: inset 0 0 8px 1px rgba(126, 34, 206, 0.6);
+    }
   }
 
   &.action-btn-success {
-    background: rgba(16, 185, 129, 0.08);
-    border-color: rgba(16, 185, 129, 0.2);
-    color: #34d399;
-    &:hover { background: rgba(16, 185, 129, 0.15); }
+    &:hover { 
+      background: rgba(6, 182, 212, 0.1); 
+      color: #22d3ee;
+      border-color: #0891b2;
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+      &::after { box-shadow: inset 0 0 8px 1px rgba(6, 182, 212, 0.6); }
+    }
   }
 
   &.action-btn-warn {
-    background: rgba(239, 68, 68, 0.08);
-    border-color: rgba(239, 68, 68, 0.2);
-    color: #f87171;
-    &:hover { background: rgba(239, 68, 68, 0.15); }
+    &:hover { 
+      background: rgba(239, 68, 68, 0.1); 
+      color: #fca5a5;
+      border-color: #dc2626;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+      &::after { box-shadow: inset 0 0 8px 1px rgba(239, 68, 68, 0.6); }
+    }
   }
 }
 
