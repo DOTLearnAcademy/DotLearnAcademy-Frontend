@@ -79,7 +79,7 @@ export class CheckoutComponent implements OnInit {
 
   openRazorpayModal(checkoutRes: any) {
     const options = {
-      key: checkoutRes.razorpayKey,
+      key: checkoutRes.razorpayKeyId,
       amount: checkoutRes.amount * 100, // paise
       currency: checkoutRes.currency,
       name: 'DOTLearn Academy',
