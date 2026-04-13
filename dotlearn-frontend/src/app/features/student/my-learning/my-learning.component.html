@@ -103,7 +103,8 @@
       <div class="progress-block">
         <div class="progress-head">
           <span>Progress</span>
-          <strong>{{ enrollment.progressPercent || 0 }}%</strong>
+          <strong *ngIf="(enrollment.progressPercent || 0) < 100">{{ enrollment.progressPercent || 0 }}%</strong>
+          <strong *ngIf="(enrollment.progressPercent || 0) >= 100" style="color: #86efac;">✔ Completed</strong>
         </div>
 
         <div class="progress-track">

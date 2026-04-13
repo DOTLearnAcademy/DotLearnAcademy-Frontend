@@ -250,3 +250,29 @@ div.mat-mdc-select-panel {
   color: #c9d6e6 !important;
   border-bottom-color: rgba(148, 163, 184, 0.12) !important;
 }
+
+/* Fix all dark text issues */
+body {
+  color: #e5e7eb;
+}
+
+.mat-mdc-select-value,
+.mat-mdc-select-placeholder,
+.mat-mdc-option,
+.mat-mdc-input-element {
+  color: #e5e7eb !important;
+}
+
+::placeholder {
+  color: #94a3b8 !important;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+}
+
+.card:hover, .course-card:hover, .cert-card:hover, .purchase-card:hover {
+  border-color: rgba(124,108,255,0.3);
+  transform: translateY(-4px);
+}
