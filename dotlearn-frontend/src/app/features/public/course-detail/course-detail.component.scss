@@ -8,14 +8,14 @@
 }
 
 .course-hero {
-  h1 { font-size: 2rem; color: #1E3A5F; margin: 16px 0; }
-  p { color: #555; line-height: 1.6; margin-bottom: 16px; }
+  h1 { font-size: 2.5rem; color: var(--color-text-main); margin: 16px 0; }
+  p { color: var(--color-text-muted); line-height: 1.6; margin-bottom: 16px; font-size: 1.1rem; }
 }
 
 .course-stats {
   display: flex;
   gap: 24px;
-  color: #666;
+  color: var(--color-text-muted);
 }
 
 .sticky-sidebar { position: sticky; top: 80px; }
@@ -24,7 +24,7 @@
   .price-display {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #1E3A5F;
+    color: var(--color-text-main);
     margin-bottom: 16px;
   }
 }
@@ -34,7 +34,7 @@
 
 .guarantee {
   text-align: center;
-  color: #666;
+  color: var(--color-text-muted);
   font-size: 0.85rem;
 }
 
@@ -46,7 +46,7 @@
     align-items: center;
     gap: 8px;
     padding: 6px 0;
-    color: #555;
-    mat-icon { color: #2E75B6; font-size: 1.1rem; }
+    color: var(--color-text-muted);
+    mat-icon { color: #a78bfa; font-size: 1.1rem; }
   }
 }

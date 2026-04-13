@@ -1,0 +1,52 @@
+<div class="checkout-layout">
+  <div *ngIf="isLoading" class="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Preparing secure checkout...</p>
+  </div>
+
+  <div *ngIf="!isLoading && courseDetails" class="checkout-container">
+    <div class="checkout-header">
+      <h2>Complete Your Purchase</h2>
+      <button mat-button color="warn" (click)="cancel()">Cancel & Return</button>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="error-alert">
+      {{ errorMessage }}
+    </div>
+
+    <div class="checkout-content">
+      <div class="order-summary">
+        <div class="course-info">
+          <h3>{{ courseDetails.title }}</h3>
+          <p class="instructor">Instructor: {{ courseDetails.instructorName || 'Academy Instructor' }}</p>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <div class="price-row">
+          <span>Original Price</span>
+          <span>₹{{ courseDetails.price }}</span>
+        </div>
+        <div class="price-row discount">
+          <span>Discount</span>
+          <span>- ₹0</span>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <div class="price-row total">
+          <span>Total</span>
+          <span>₹{{ courseDetails.price }}</span>
+        </div>
+
+        <button mat-raised-button color="primary" class="pay-btn" 
+                [disabled]="isProcessing" (click)="payNow()">
+          <span *ngIf="!isProcessing">Pay ₹{{ courseDetails.price }} Securely</span>
+          <span *ngIf="isProcessing">Processing...</span>
+        </button>
+        <p class="secure-note">🔒 Secured by Razorpay</p>
+      </div>
+    </div>
+  </div>
+</div>

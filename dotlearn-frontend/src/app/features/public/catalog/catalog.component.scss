@@ -7,7 +7,7 @@
 }
 
 .filters {
-  h3 { font-size: 1.2rem; color: #1E3A5F; margin-bottom: 16px; }
+  h3 { font-size: 1.2rem; color: var(--color-text-main); margin-bottom: 16px; }
 }
 
 .full-width { width: 100%; margin-bottom: 16px; }
@@ -17,7 +17,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  span { color: #666; }
+  span { color: var(--color-text-muted); }
 }
 
 .course-grid {
@@ -37,22 +37,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.85rem;
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 
 mat-paginator {
   margin-top: 32px;
   border-radius: 12px;
-  background: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  background: var(--color-surface);
+  color: var(--color-text-main);
+  box-shadow: var(--shadow-soft);
 }
 
 .price {
   font-weight: bold;
-  color: #2E75B6;
+  color: #a78bfa; /* subtle purple/indigo */
   font-size: 1.1rem;
 }

@@ -20,6 +20,7 @@ import { QuizComponent } from './quiz/quiz.component';
 import { CertificatesComponent } from './certificates/certificates.component';
 import { PurchaseHistoryComponent } from './purchase-history/purchase-history.component';
 import { ProfileComponent } from './profile/profile.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
   { path: 'my-learning', component: MyLearningComponent },
@@ -28,6 +29,7 @@ const routes: Routes = [
   { path: 'certificates', component: CertificatesComponent },
   { path: 'purchases', component: PurchaseHistoryComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'checkout', component: CheckoutComponent },
   { path: '', redirectTo: 'my-learning', pathMatch: 'full' }
 ];
 
@@ -38,7 +40,8 @@ const routes: Routes = [
     QuizComponent,
     CertificatesComponent,
     PurchaseHistoryComponent,
-    ProfileComponent
+    ProfileComponent,
+    CheckoutComponent
   ],
   imports: [
     CommonModule,

@@ -57,7 +57,7 @@ export class CurriculumBuilderComponent implements OnInit {
 
   loadLessons() {
     this.isLoading = true;
-    this.http.get<Lesson[]>(`${environment.apiUrl}/courses/${this.courseId}/lessons`)
+    this.http.get<Lesson[]>(`${environment.apiUrl}/lessons/course/${this.courseId}`)
       .subscribe({
         next: data => {
           this.lessons = data.sort((a, b) => a.orderIndex - b.orderIndex);
@@ -83,11 +83,11 @@ export class CurriculumBuilderComponent implements OnInit {
       title: this.lessonForm.value.title,
       type: this.lessonForm.value.type,
       isPreview: this.lessonForm.value.isPreview || false,
-      description: this.lessonForm.value.description || '',
+      textContent: this.lessonForm.value.description || '',
       orderIndex: this.lessons.length
     };
 
-    this.http.post<Lesson>(`${environment.apiUrl}/courses/${this.courseId}/lessons`, payload)
+    this.http.post<Lesson>(`${environment.apiUrl}/lessons/course/${this.courseId}`, payload)
       .subscribe({
         next: () => {
           this.isSubmittingLesson = false;
