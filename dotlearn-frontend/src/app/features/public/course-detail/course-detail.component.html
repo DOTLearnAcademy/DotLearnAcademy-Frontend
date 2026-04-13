@@ -62,7 +62,7 @@
           <p>Preview the course structure before you enroll.</p>
         </div>
 
-        <div class="curriculum-list" *ngIf="lessons?.length > 0; else noCurriculum">
+        <div class="curriculum-list" *ngIf="lessons && lessons.length > 0; else noCurriculum">
           <div class="curriculum-item" *ngFor="let lesson of lessons; let i = index">
             <div class="curriculum-left">
               <div class="lesson-no">{{ i + 1 }}</div>

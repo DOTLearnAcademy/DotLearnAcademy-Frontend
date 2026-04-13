@@ -13,7 +13,7 @@
 
     <!-- Right Side -->
     <div class="auth-form-wrap">
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-card">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card">
         <h2>Sign in</h2>
         <p class="subtext">Access your account to continue learning</p>
 
@@ -27,7 +27,7 @@
           <input matInput formControlName="password" type="password">
         </mat-form-field>
 
-        <button type="submit" class="primary-btn" [disabled]="loginForm.invalid || isLoading">
+        <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading">
           <mat-icon>login</mat-icon>
           <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
         </button>
