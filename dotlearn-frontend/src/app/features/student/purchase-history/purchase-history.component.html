@@ -1,40 +1,80 @@
 <div class="purchases-page">
-  <div class="page-header">
-    <h1>Purchase History</h1>
-  </div>
+  <section class="purchases-hero">
+    <div class="hero-copy">
+      <div class="hero-badge">
+        <mat-icon>receipt_long</mat-icon>
+        <span>Purchase History</span>
+      </div>
 
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+      <h1>Track every order and payment status</h1>
+      <p>
+        Review your previous course purchases, payment outcomes, and order timeline
+        in a cleaner, easier-to-scan history view.
+      </p>
+    </div>
 
-  <mat-table [dataSource]="payments" *ngIf="!isLoading" class="purchase-table">
-    <ng-container matColumnDef="date">
-      <mat-header-cell *matHeaderCellDef>Date</mat-header-cell>
-      <mat-cell *matCellDef="let p">{{ p.createdAt | date:'mediumDate' }}</mat-cell>
-    </ng-container>
+    <div class="hero-stats">
+      <div class="mini-stat">
+        <span>Total Orders</span>
+        <strong>{{ payments.length }}</strong>
+      </div>
+      <div class="mini-stat">
+        <span>Succeeded</span>
+        <strong>{{ payments.filter(p => p.status === 'Succeeded').length }}</strong>
+      </div>
+    </div>
+  </section>
 
-    <ng-container matColumnDef="course">
-      <mat-header-cell *matHeaderCellDef>Course</mat-header-cell>
-      <mat-cell *matCellDef="let p">{{ p.courseId | slice:0:8 }}...</mat-cell>
-    </ng-container>
+  <mat-progress-bar
+    mode="indeterminate"
+    *ngIf="isLoading"
+    class="loading-bar">
+  </mat-progress-bar>
 
-    <ng-container matColumnDef="amount">
-      <mat-header-cell *matHeaderCellDef>Amount</mat-header-cell>
-      <mat-cell *matCellDef="let p">₹{{ p.amount }}</mat-cell>
-    </ng-container>
+  <section class="purchase-list" *ngIf="!isLoading && payments.length > 0">
+    <article class="purchase-card" *ngFor="let p of payments">
+      <div class="purchase-main">
+        <div class="purchase-icon">
+          <mat-icon>
+            {{ p.status === 'Succeeded' ? 'check_circle' : p.status === 'Failed' ? 'cancel' : 'sync' }}
+          </mat-icon>
+        </div>
 
-    <ng-container matColumnDef="status">
-      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
-      <mat-cell *matCellDef="let p">
-        <mat-chip [color]="getStatusColor(p.status)" selected>
-          {{ p.status }}
-        </mat-chip>
-      </mat-cell>
-    </ng-container>
+        <div class="purchase-info">
+          <div class="purchase-label">Course Purchase</div>
+          <h3>{{ p.courseId }}</h3>
+          <div class="purchase-meta">
+            <span>{{ p.createdAt | date:'mediumDate' }}</span>
+            <span class="dot"></span>
+            <span>{{ p.currency }} {{ p.amount }}</span>
+          </div>
+        </div>
+      </div>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-  </mat-table>
+      <div class="purchase-side">
+        <div
+          class="status-badge"
+          [class.success]="p.status === 'Succeeded'"
+          [class.failed]="p.status === 'Failed'"
+          [class.refunded]="p.status === 'Refunded'">
+          <mat-icon>
+            {{ p.status === 'Succeeded' ? 'task_alt' : p.status === 'Failed' ? 'error' : 'restart_alt' }}
+          </mat-icon>
+          <span>{{ p.status }}</span>
+        </div>
+      </div>
+    </article>
+  </section>
 
-  <div class="empty-state" *ngIf="!isLoading && payments.length === 0">
-    <p>No purchases yet.</p>
-  </div>
+  <section class="empty-state" *ngIf="!isLoading && payments.length === 0">
+    <div class="empty-icon">
+      <mat-icon>shopping_bag</mat-icon>
+    </div>
+    <h3>No purchases yet</h3>
+    <p>Your paid courses will appear here once you complete checkout.</p>
+    <a routerLink="/courses" class="empty-cta">
+      <mat-icon>travel_explore</mat-icon>
+      <span>Browse Courses</span>
+    </a>
+  </section>
 </div>

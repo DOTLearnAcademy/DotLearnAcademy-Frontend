@@ -2,11 +2,14 @@ import { Component, OnInit, HostListener } from '@angular/core';
 import { AuthService } from '../../../features/auth/services/auth.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatIconModule, MatMenuModule, MatButtonModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
@@ -49,6 +52,19 @@ export class NavbarComponent implements OnInit {
       .slice(0, 2)
       .join('')
       .toUpperCase();
+  }
+
+  get userInitial(): string {
+    const profile = localStorage.getItem('userProfile');
+    if (!profile) return 'U';
+
+    try {
+      const parsed = JSON.parse(profile);
+      const name = parsed?.fullName || parsed?.name || parsed?.email || 'User';
+      return String(name).trim().charAt(0).toUpperCase();
+    } catch {
+      return 'U';
+    }
   }
 
   toggleDropdown() {

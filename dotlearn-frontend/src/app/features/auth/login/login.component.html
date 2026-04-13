@@ -1,51 +1,42 @@
-<div class="auth-container">
-  <mat-card class="auth-card">
-    <mat-card-header>
-      <mat-card-title>Welcome Back</mat-card-title>
-      <mat-card-subtitle>Sign in to your DOTLearn account</mat-card-subtitle>
-    </mat-card-header>
+<div class="auth-page">
+  <div class="auth-layout">
+    <!-- Left Side -->
+    <div class="auth-brand">
+      <div class="brand-box">
+        <div class="brand-mark">D</div>
+        <h1>Welcome back</h1>
+        <p>
+          Continue your learning journey, track progress, and unlock your next milestone.
+        </p>
+      </div>
+    </div>
 
-    <mat-card-content>
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!-- Right Side -->
+    <div class="auth-form-wrap">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-card">
+        <h2>Sign in</h2>
+        <p class="subtext">Access your account to continue learning</p>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" placeholder="you@example.com">
-          <mat-error *ngIf="form.get('email')?.hasError('required')">Email is required</mat-error>
-          <mat-error *ngIf="form.get('email')?.hasError('email')">Invalid email format</mat-error>
+          <input matInput formControlName="email" type="email">
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Password</mat-label>
-          <input matInput formControlName="password"
-                 [type]="hidePassword ? 'password' : 'text'">
-          <button mat-icon-button matSuffix type="button"
-                  (click)="hidePassword = !hidePassword">
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          <mat-error *ngIf="form.get('password')?.hasError('required')">
-            Password is required
-          </mat-error>
+          <input matInput formControlName="password" type="password">
         </mat-form-field>
 
-        <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
-
-        <button mat-raised-button color="primary" type="submit"
-                class="full-width submit-btn" [disabled]="isLoading">
-          <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
-          <span *ngIf="!isLoading">Sign In</span>
+        <button type="submit" class="primary-btn" [disabled]="loginForm.invalid || isLoading">
+          <mat-icon>login</mat-icon>
+          <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
         </button>
 
+        <div class="auth-footer">
+          <span>Don't have an account?</span>
+          <a routerLink="/auth/register">Create one</a>
+        </div>
       </form>
-
-      <div class="divider-container">Or continue with</div>
-
-      <div class="google-wrapper" id="google-btn"></div>
-
-      <div class="auth-links">
-        <a routerLink="/auth/forgot-password">Forgot password?</a>
-        <span>Don't have an account? <a routerLink="/auth/register">Sign up</a></span>
-      </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </div>

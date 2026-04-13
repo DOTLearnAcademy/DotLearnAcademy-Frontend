@@ -1,38 +1,87 @@
 <div class="certificates-page">
-  <div class="page-header">
-    <h1>My Certificates</h1>
-    <p>{{ certificates.length }} certificates earned</p>
-  </div>
+  <section class="certificates-hero">
+    <div class="hero-copy">
+      <div class="hero-badge">
+        <mat-icon>workspace_premium</mat-icon>
+        <span>Certificate Center</span>
+      </div>
 
-  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
-
-  <div class="cert-grid" *ngIf="!isLoading">
-    <mat-card *ngFor="let cert of certificates" class="cert-card">
-      <mat-card-header>
-        <mat-icon mat-card-avatar color="primary">card_membership</mat-icon>
-        <mat-card-title>Certificate of Completion</mat-card-title>
-        <mat-card-subtitle>
-          Earned {{ cert.createdAt | date:'mediumDate' }}
-        </mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p class="verification">
-          Verification Code: <strong>{{ cert.verificationCode }}</strong>
-        </p>
-      </mat-card-content>
-      <mat-card-actions>
-        <button mat-button color="primary" (click)="download(cert)">
-          <mat-icon>download</mat-icon> Download PDF
-        </button>
-        <button mat-button (click)="shareLinkedIn(cert)">
-          <mat-icon>share</mat-icon> Share
-        </button>
-      </mat-card-actions>
-    </mat-card>
-
-    <div class="empty-state" *ngIf="certificates.length === 0">
-      <mat-icon>card_membership</mat-icon>
-      <p>No certificates yet. Complete a course to earn one!</p>
+      <h1>Your achievements, beautifully presented</h1>
+      <p>
+        Keep track of every certificate you’ve earned, open the PDF instantly,
+        and share your completed learning journey with confidence.
+      </p>
     </div>
-  </div>
+
+    <div class="hero-stat-card">
+      <div class="stat-label">Certificates Earned</div>
+      <div class="stat-value">{{ certificates.length }}</div>
+      <div class="stat-meta">Issued after successful course completion</div>
+    </div>
+  </section>
+
+  <mat-progress-bar
+    mode="indeterminate"
+    *ngIf="isLoading"
+    class="loading-bar">
+  </mat-progress-bar>
+
+  <section class="cert-grid" *ngIf="!isLoading && certificates.length > 0">
+    <article class="cert-card" *ngFor="let cert of certificates">
+      <div class="cert-top">
+        <div class="cert-icon">
+          <mat-icon>verified</mat-icon>
+        </div>
+
+        <div class="cert-status">
+          <mat-icon>check_circle</mat-icon>
+          <span>Issued</span>
+        </div>
+      </div>
+
+      <div class="cert-body">
+        <div class="cert-label">Certificate</div>
+        <h3>{{ cert.courseId }}</h3>
+        <p class="cert-subtext">
+          Official course completion certificate issued by DOTLearn Academy.
+        </p>
+      </div>
+
+      <div class="verification-box">
+        <div class="verification-label">Verification Code</div>
+        <div class="verification-code">{{ cert.verificationCode }}</div>
+      </div>
+
+      <div class="cert-meta">
+        <div class="meta-item">
+          <span>Issued On</span>
+          <strong>{{ cert.createdAt | date:'mediumDate' }}</strong>
+        </div>
+      </div>
+
+      <div class="cert-actions">
+        <button class="primary-action" (click)="download(cert)">
+          <mat-icon>download</mat-icon>
+          <span>Open Certificate</span>
+        </button>
+
+        <button class="secondary-action" (click)="shareLinkedIn(cert)">
+          <mat-icon>share</mat-icon>
+          <span>Share</span>
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <section class="empty-state" *ngIf="!isLoading && certificates.length === 0">
+    <div class="empty-icon">
+      <mat-icon>workspace_premium</mat-icon>
+    </div>
+    <h3>No certificates yet</h3>
+    <p>Complete a course to unlock your first verified certificate.</p>
+    <a routerLink="/student/my-learning" class="empty-cta">
+      <mat-icon>play_circle</mat-icon>
+      <span>Continue Learning</span>
+    </a>
+  </section>
 </div>
