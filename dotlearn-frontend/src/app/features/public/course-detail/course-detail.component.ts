@@ -42,10 +42,19 @@ export class CourseDetailComponent implements OnInit {
     }
 
     if (this.course?.price === 0) {
+      this.isEnrolling = true;
       this.http.post(`${environment.apiUrl}/enrollments/free`,
         { courseId: this.course.id }).subscribe({
-        next: () => this.router.navigate(['/student/my-learning']),
-        error: err => console.error(err)
+        next: () => { this.isEnrolling = false; this.router.navigate(['/student/my-learning']); },
+        error: err => {
+          this.isEnrolling = false;
+          // 409 = already enrolled — take them to their learning dashboard
+          if (err.status === 409) {
+            this.router.navigate(['/student/my-learning']);
+          } else {
+            console.error('Enrollment error:', err);
+          }
+        }
       });
     } else {
       this.router.navigate(['/student/checkout'],
