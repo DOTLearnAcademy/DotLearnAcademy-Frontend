@@ -125,11 +125,25 @@
             <span class="upload-pct">{{ uploadProgress }}%</span>
           </div>
 
-          <!-- Upload video button (for Video type) -->
-          <label class="action-btn" *ngIf="lesson.type === 'Video' && uploadingLessonId !== lesson.id">
-            <span>🎬</span> Upload
-            <input type="file" accept="video/*" hidden (change)="uploadVideo(lesson.id, $event)">
-          </label>
+          <!-- Upload/View controls (for Video type) -->
+          <ng-container *ngIf="lesson.type === 'Video' && uploadingLessonId !== lesson.id">
+
+            <!-- Already uploaded: show badge + view + re-upload -->
+            <ng-container *ngIf="lesson.hasVideo">
+              <span class="uploaded-badge">✅ Uploaded</span>
+              <label class="action-btn action-btn-view" title="Re-upload video">
+                <span>🔄</span>
+                <input type="file" accept="video/*" hidden (change)="uploadVideo(lesson.id, $event)">
+              </label>
+            </ng-container>
+
+            <!-- Not uploaded yet: Upload button -->
+            <label class="action-btn" *ngIf="!lesson.hasVideo">
+              <span>🎬</span> Upload
+              <input type="file" accept="video/*" hidden (change)="uploadVideo(lesson.id, $event)">
+            </label>
+
+          </ng-container>
 
           <!-- Delete -->
           <button class="action-btn action-btn-danger" (click)="deleteLesson(lesson.id)"
