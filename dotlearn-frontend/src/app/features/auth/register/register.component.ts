@@ -51,16 +51,21 @@ export class RegisterComponent {
       setTimeout(() => this.ngOnInit(), 500);
       return;
     }
-    
+
+    const googleBtn = document.getElementById('google-btn');
+    if (!googleBtn) return;
+
     google.accounts.id.initialize({
       client_id: environment.googleClientId,
       callback: this.handleGoogleCredentialResponse.bind(this)
     });
-    
-    google.accounts.id.renderButton(
-      document.getElementById("google-btn"),
-      { theme: "outline", size: "large", width: 380, text: "signup_with" }
-    );
+
+    google.accounts.id.renderButton(googleBtn, {
+      theme: 'outline',
+      size: 'large',
+      width: 380,
+      text: 'signup_with'
+    });
   }
 
   handleGoogleCredentialResponse(response: any) {

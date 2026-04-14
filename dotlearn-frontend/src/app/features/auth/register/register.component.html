@@ -20,20 +20,30 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Full Name</mat-label>
-          <input matInput formControlName="name">
+          <input matInput formControlName="fullName" data-cy="fullname-input">
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email">
+          <input matInput type="email" formControlName="email" data-cy="email-input">
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Password</mat-label>
-          <input matInput formControlName="password" type="password">
+          <input matInput type="password" formControlName="password" data-cy="password-input">
         </mat-form-field>
 
-        <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role" data-cy="role-select">
+            <mat-option value="Student">Student</mat-option>
+            <mat-option value="Instructor">Instructor</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div id="google-btn"></div>
+
+        <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading" data-cy="register-btn">
           <mat-icon>person_add</mat-icon>
           <span>{{ isLoading ? 'Creating...' : 'Create Account' }}</span>
         </button>
