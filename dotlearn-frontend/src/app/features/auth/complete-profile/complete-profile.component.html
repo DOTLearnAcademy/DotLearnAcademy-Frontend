@@ -1,0 +1,45 @@
+<div class="auth-page">
+  <div class="auth-layout">
+    <div class="auth-brand">
+      <div class="brand-box">
+        <div class="brand-mark">D</div>
+        <h1>Almost there!</h1>
+        <p>Complete your profile to unlock DOTLearn.</p>
+      </div>
+    </div>
+
+    <div class="auth-form-wrap">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card">
+        <h2>Complete Profile</h2>
+        <p class="subtext">Just a few more details to set up your account</p>
+
+        <div class="profile-preview" *ngIf="picture">
+          <img [src]="picture" alt="Google Profile" class="avatar-preview" referrerpolicy="no-referrer" />
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email (from Google)</mat-label>
+          <input matInput formControlName="email" type="email" readonly>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullName">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>I am a...</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="Student">Student</mat-option>
+            <mat-option value="Instructor">Instructor</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading">
+          <mat-icon>how_to_reg</mat-icon>
+          <span>{{ isLoading ? 'Completing Setup...' : 'Complete Setup' }}</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

@@ -41,7 +41,9 @@
           </mat-select>
         </mat-form-field>
 
-        <div id="google-btn"></div>
+        <div class="divider"><span>OR</span></div>
+        <div id="google-btn" class="google-login-btn"></div>
+        <br/>
 
         <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading" data-cy="register-btn">
           <mat-icon>person_add</mat-icon>

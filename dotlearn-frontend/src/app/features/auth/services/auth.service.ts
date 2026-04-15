@@ -4,10 +4,40 @@ import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
+export interface UserProfile {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  authProvider?: string;
+  profileImageUrl?: string;
+}
+
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   expiresIn: number;
+  user?: UserProfile;
+}
+
+export interface GoogleAuthResponse {
+  requiresOnboarding: boolean;
+  accessToken?: string;
+  refreshToken?: string;
+  expiresIn?: number;
+  user?: UserProfile;
+  email?: string;
+  fullName?: string;
+  googleSubjectId?: string;
+  profileImageUrl?: string;
+}
+
+export interface GoogleCompleteSignupRequest {
+  email: string;
+  fullName: string;
+  role: string;
+  googleSubjectId: string;
+  profileImageUrl?: string;
 }
 
 export interface RegisterRequest {
@@ -17,11 +47,8 @@ export interface RegisterRequest {
   role: string;
 }
 
-export interface UserProfile {
-  id: string;
+export interface UpdateProfileRequest {
   fullName: string;
-  email: string;
-  role: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -31,29 +58,53 @@ export class AuthService {
   constructor(private http: HttpClient, private router: Router) {}
 
   login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`,
-      { email, password }).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
+      tap(res => this.handleAuthSuccess(res))
+    );
+  }
+
+  register(request: RegisterRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/register`, request).pipe(
+      tap(res => this.handleAuthSuccess(res))
+    );
+  }
+
+  googleLogin(idToken: string): Observable<GoogleAuthResponse> {
+    return this.http.post<GoogleAuthResponse>(`${this.apiUrl}/auth/google`, { idToken }).pipe(
       tap(res => {
-        localStorage.setItem('accessToken', res.accessToken);
-        localStorage.setItem('refreshToken', res.refreshToken);
-        this.decodeAndStoreProfile(res.accessToken);
+        if (!res.requiresOnboarding && res.accessToken) {
+          const loginRes: LoginResponse = {
+            accessToken: res.accessToken,
+            refreshToken: res.refreshToken!,
+            expiresIn: res.expiresIn!,
+            user: res.user
+          };
+          this.handleAuthSuccess(loginRes);
+        }
       })
     );
   }
 
-  googleLogin(idToken: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/google-login`,
-      { idToken }).pipe(
-      tap(res => {
-        localStorage.setItem('accessToken', res.accessToken);
-        localStorage.setItem('refreshToken', res.refreshToken);
-        this.decodeAndStoreProfile(res.accessToken);
+  completeGoogleSignup(request: GoogleCompleteSignupRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/google/complete`, request).pipe(
+      tap(res => this.handleAuthSuccess(res))
+    );
+  }
+
+  getProfileApi(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${this.apiUrl}/auth/profile`).pipe(
+      tap(user => {
+        localStorage.setItem('userProfile', JSON.stringify(user));
       })
     );
   }
 
-  register(request: RegisterRequest): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/register`, request);
+  updateProfileApi(request: UpdateProfileRequest): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${this.apiUrl}/auth/profile`, request).pipe(
+      tap(user => {
+        localStorage.setItem('userProfile', JSON.stringify(user));
+      })
+    );
   }
 
   logout() {
@@ -62,13 +113,11 @@ export class AuthService {
   }
 
   requestPasswordReset(email: string): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/auth/password-reset/request`, { email });
+    return this.http.post(`${this.apiUrl}/auth/password-reset/request`, { email });
   }
 
   confirmPasswordReset(token: string, newPassword: string): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/auth/password-reset/confirm`, { token, newPassword });
+    return this.http.post(`${this.apiUrl}/auth/password-reset/confirm`, { token, newPassword });
   }
 
   isLoggedIn(): boolean {
@@ -92,10 +141,20 @@ export class AuthService {
     return '/student/my-learning';
   }
 
+  private handleAuthSuccess(res: LoginResponse): void {
+    localStorage.setItem('accessToken', res.accessToken);
+    localStorage.setItem('refreshToken', res.refreshToken);
+
+    if (res.user) {
+      localStorage.setItem('userProfile', JSON.stringify(res.user));
+    } else {
+      this.decodeAndStoreProfile(res.accessToken);
+    }
+  }
+
   private decodeAndStoreProfile(token: string): void {
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      // Support multiple JWT claim formats
       const role =
         payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
         payload['role'] ||
@@ -112,7 +171,7 @@ export class AuthService {
         payload['Email'] ||
         '';
       const id = payload['sub'] || payload['id'] || '';
-      const profile: UserProfile = { id, fullName, email, role };
+      const profile: UserProfile = { id, fullName, email, role, authProvider: 'Local' };
       localStorage.setItem('userProfile', JSON.stringify(profile));
     } catch {
       console.warn('Could not decode JWT payload');

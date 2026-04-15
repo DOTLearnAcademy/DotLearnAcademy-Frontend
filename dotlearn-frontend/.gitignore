@@ -52,3 +52,10 @@ __screenshots__/
 # System files
 .DS_Store
 Thumbs.db
+
+# Custom Deployment Artifact Ignores
+*.tar.gz
+publish-*/
+publish-v*
+*.sql
+migration_error_capture.txt

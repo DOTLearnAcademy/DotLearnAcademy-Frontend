@@ -9,6 +9,8 @@ import { routes } from './app.routes';
 import { authReducer } from './store/auth/auth.reducer';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 
+import { SocialAuthServiceConfig, GoogleLoginProvider } from '@abacritt/angularx-social-login';
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -23,5 +25,20 @@ export const appConfig: ApplicationConfig = {
     provideStore({ auth: authReducer }),
     provideEffects([]),
     provideStoreDevtools({ maxAge: 25 }),
+    {
+      provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider('YOUR_GOOGLE_CLIENT_ID')
+          }
+        ],
+        onError: (err) => {
+          console.error(err);
+        }
+      } as SocialAuthServiceConfig,
+    }
   ]
 };

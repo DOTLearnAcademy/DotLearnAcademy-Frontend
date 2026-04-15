@@ -55,10 +55,15 @@ export class RegisterComponent {
     const googleBtn = document.getElementById('google-btn');
     if (!googleBtn) return;
 
-    google.accounts.id.initialize({
-      client_id: environment.googleClientId,
-      callback: this.handleGoogleCredentialResponse.bind(this)
-    });
+    if (!(window as any).googleInitDone) {
+      google.accounts.id.initialize({
+        client_id: environment.googleClientId,
+        callback: this.handleGoogleCredentialResponse.bind(this)
+      });
+      (window as any).googleInitDone = true;
+    } else {
+      google.accounts.id.prompt(() => {});
+    }
 
     google.accounts.id.renderButton(googleBtn, {
       theme: 'outline',
@@ -71,9 +76,20 @@ export class RegisterComponent {
   handleGoogleCredentialResponse(response: any) {
     this.isLoading = true;
     this.authService.googleLogin(response.credential).subscribe({
-      next: () => {
+      next: (res) => {
         this.isLoading = false;
-        this.router.navigate([this.authService.getRoleRedirect()]);
+        if (res.requiresOnboarding) {
+          this.router.navigate(['/auth/complete-profile'], {
+            queryParams: { 
+              email: res.email, 
+              fullName: res.fullName, 
+              subjectId: res.googleSubjectId, 
+              picture: res.profileImageUrl 
+            }
+          });
+        } else {
+          this.router.navigate([this.authService.getRoleRedirect()]);
+        }
       },
       error: () => {
         this.isLoading = false;
