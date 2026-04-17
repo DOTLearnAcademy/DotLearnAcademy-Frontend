@@ -15,6 +15,13 @@
       {{ errorMessage }}
     </div>
 
+    <div *ngIf="alreadyOwned" class="error-alert">
+      You already own this course.
+      <button mat-button color="primary" (click)="goToOwnedCourse()">
+        Go to Course
+      </button>
+    </div>
+
     <div class="checkout-content">
       <div class="order-summary">
         <div class="course-info">
@@ -41,7 +48,7 @@
         </div>
 
         <button mat-raised-button color="primary" class="pay-btn" 
-                [disabled]="isProcessing" (click)="payNow()">
+                [disabled]="isProcessing || alreadyOwned" (click)="payNow()">
           <span *ngIf="!isProcessing">Pay ₹{{ courseDetails.price }} Securely</span>
           <span *ngIf="isProcessing">Processing...</span>
         </button>

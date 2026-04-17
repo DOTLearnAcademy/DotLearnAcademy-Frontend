@@ -17,6 +17,8 @@ export class CourseDetailComponent implements OnInit {
   isLoading = true;
   isEnrolling = false;
   userRole = '';
+  isAlreadyEnrolled = false;
+  ownedEnrollmentId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,13 +31,37 @@ export class CourseDetailComponent implements OnInit {
   ngOnInit() {
     this.userRole = this.authService.getRole();
     const id = this.route.snapshot.paramMap.get('id')!;
+
     this.courseService.getById(id).subscribe({
-      next: course => { 
-        this.course = course; 
+      next: course => {
+        this.course = course;
         this.lessons = (course as any).lessons || [];
-        this.isLoading = false; 
+        this.checkOwnership(id);
       },
       error: () => { this.isLoading = false; }
+    });
+  }
+
+  checkOwnership(courseId: string) {
+    const token = localStorage.getItem('accessToken');
+
+    if (!token || this.userRole !== 'Student') {
+      this.isLoading = false;
+      return;
+    }
+
+    this.http.get<any[]>(`${environment.apiUrl}/enrollments/my`).subscribe({
+      next: (enrollments) => {
+        const existing = enrollments.find(e => e.courseId === courseId);
+        if (existing) {
+          this.isAlreadyEnrolled = true;
+          this.ownedEnrollmentId = existing.id;
+        }
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
     });
   }
 
@@ -46,7 +72,16 @@ export class CourseDetailComponent implements OnInit {
       return;
     }
 
-    if (this.course?.price === 0) {
+    if (this.userRole !== 'Student' || !this.course) {
+      return;
+    }
+
+    if (this.isAlreadyEnrolled) {
+      this.continueLearning();
+      return;
+    }
+
+    if (this.course.price === 0) {
       this.isEnrolling = true;
       this.http.post(`${environment.apiUrl}/enrollments/free`,
         { courseId: this.course.id }).subscribe({
@@ -61,9 +96,21 @@ export class CourseDetailComponent implements OnInit {
           }
         }
       });
-    } else {
-      this.router.navigate(['/student/checkout'],
-        { queryParams: { courseId: this.course?.id } });
+      return;
     }
+
+    this.router.navigate(['/student/checkout'], {
+      queryParams: { courseId: this.course.id }
+    });
+  }
+
+  continueLearning() {
+    if (!this.course) {
+      return;
+    }
+
+    this.router.navigate(['/student/course', this.course.id], {
+      queryParams: this.ownedEnrollmentId ? { enrollmentId: this.ownedEnrollmentId } : {}
+    });
   }
 }

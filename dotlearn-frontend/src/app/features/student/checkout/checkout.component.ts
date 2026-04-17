@@ -17,6 +17,8 @@ export class CheckoutComponent implements OnInit {
   isProcessing: boolean = false;
   courseDetails: any = null;
   errorMessage: string = '';
+  alreadyOwned: boolean = false;
+  ownedEnrollmentId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,7 +33,26 @@ export class CheckoutComponent implements OnInit {
         this.router.navigate(['/home']);
         return;
       }
-      this.loadCourseDetails();
+      this.checkOwnershipAndLoadCourse();
+    });
+  }
+
+  checkOwnershipAndLoadCourse() {
+    this.http.get<any[]>(`${environment.apiUrl}/enrollments/my`).subscribe({
+      next: (enrollments) => {
+        const existing = enrollments.find(e => e.courseId === this.courseId);
+        if (existing) {
+          this.alreadyOwned = true;
+          this.ownedEnrollmentId = existing.id;
+          this.isLoading = false;
+          return;
+        }
+
+        this.loadCourseDetails();
+      },
+      error: () => {
+        this.loadCourseDetails();
+      }
     });
   }
 
@@ -60,6 +81,11 @@ export class CheckoutComponent implements OnInit {
   }
 
   payNow() {
+    if (this.alreadyOwned) {
+      this.goToOwnedCourse();
+      return;
+    }
+
     if (!this.courseDetails) return;
     this.isProcessing = true;
     this.errorMessage = '';
@@ -72,6 +98,10 @@ export class CheckoutComponent implements OnInit {
         },
         error: (err) => {
           this.isProcessing = false;
+          if (err.status === 409) {
+            this.errorMessage = 'You already own this course.';
+            return;
+          }
           this.errorMessage = err.error?.error || 'Could not initiate checkout. Please try again.';
         }
       });
@@ -129,5 +159,11 @@ export class CheckoutComponent implements OnInit {
 
   cancel() {
     this.router.navigate(['/courses', this.courseId]);
+  }
+
+  goToOwnedCourse() {
+    this.router.navigate(['/student/course', this.courseId], {
+      queryParams: this.ownedEnrollmentId ? { enrollmentId: this.ownedEnrollmentId } : {}
+    });
   }
 }

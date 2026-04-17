@@ -26,7 +26,7 @@ export class CourseApprovalsComponent implements OnInit {
   ngOnInit() { this.loadCourses(); }
 
   loadCourses() {
-    this.http.get<any>(`${environment.apiUrl}/courses?state=Published`)
+    this.http.get<any>(`${environment.apiUrl}/courses?state=PendingApproval`)
       .subscribe({
         next: res => { this.courses = res.items || []; this.isLoading = false; },
         error: () => { this.isLoading = false; }

@@ -96,11 +96,22 @@
 
         <button
           class="enroll-btn"
-          *ngIf="userRole !== 'Instructor'"
+          *ngIf="isAlreadyEnrolled && userRole === 'Student'"
+          (click)="continueLearning()">
+          <mat-icon>menu_book</mat-icon>
+          <span>Continue Learning</span>
+        </button>
+
+        <button
+          class="enroll-btn"
+          *ngIf="!isAlreadyEnrolled && userRole === 'Student'"
           (click)="enroll()"
           [disabled]="isEnrolling">
           <mat-icon>{{ course.price === 0 ? 'school' : 'shopping_bag' }}</mat-icon>
-          <span>{{ course.price === 0 ? 'Enroll for Free' : 'Buy Now' }}</span>
+          <span *ngIf="course.price === 0">
+            {{ isEnrolling ? 'Enrolling...' : 'Enroll for Free' }}
+          </span>
+          <span *ngIf="course.price !== 0">Buy Now</span>
         </button>
 
         <p class="guarantee">30-day money-back guarantee</p>
