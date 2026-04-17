@@ -15,23 +15,17 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
 import { PlatformAnalyticsComponent } from './platform-analytics/platform-analytics.component';
 import { UserManagementComponent } from './user-management/user-management.component';
-import { CourseApprovalsComponent } from './course-approvals/course-approvals.component';
-import { SystemNotificationsComponent } from './system-notifications/system-notifications.component';
 
 const routes: Routes = [
   { path: 'analytics', component: PlatformAnalyticsComponent },
   { path: 'users', component: UserManagementComponent },
-  { path: 'approvals', component: CourseApprovalsComponent },
-  { path: 'notifications', component: SystemNotificationsComponent },
   { path: '', redirectTo: 'analytics', pathMatch: 'full' }
 ];
 
 @NgModule({
   declarations: [
     PlatformAnalyticsComponent,
-    UserManagementComponent,
-    CourseApprovalsComponent,
-    SystemNotificationsComponent
+    UserManagementComponent
   ],
   imports: [
     CommonModule,

@@ -66,7 +66,11 @@ export class CourseManagementComponent implements OnInit {
     this.http.get<any>(`${environment.apiUrl}/courses?instructorOnly=true`)
       .subscribe({
         next: res => {
-          this.courses = res.items || res || [];
+          const items: Course[] = res.items || res || [];
+          // Sort newest first so a newly created course is immediately visible at top
+          this.courses = items.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
           this.isLoading = false;
         },
         error: () => { this.isLoading = false; }
@@ -131,8 +135,14 @@ export class CourseManagementComponent implements OnInit {
   }
 
   getStateBadgeClass(state: string): string {
-    if (state === 'Published') return 'badge-published';
-    if (state === 'Archived') return 'badge-archived';
-    return 'badge-draft';
+    switch (state) {
+      case 'Published': return 'badge-published';
+      case 'Archived':  return 'badge-archived';
+      default:          return 'badge-draft';
+    }
+  }
+
+  getStateLabel(state: string): string {
+    return state;
   }
 }

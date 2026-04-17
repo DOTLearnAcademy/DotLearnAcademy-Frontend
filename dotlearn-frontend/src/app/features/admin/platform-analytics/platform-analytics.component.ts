@@ -10,20 +10,25 @@ import { environment } from '../../../../environments/environment';
 })
 export class PlatformAnalyticsComponent implements OnInit {
   stats = {
-    totalRevenue: 0,
-    monthlyActiveUsers: 0,
-    totalEnrollments: 0,
-    publishedCourses: 0
+    totalUsers: 0,
+    totalInstructors: 0,
+    totalStudents: 0
   };
   isLoading = true;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http.get<any>(`${environment.apiUrl}/payments/admin/stats`)
-      .subscribe({
-        next: data => { this.stats = { ...this.stats, ...data }; this.isLoading = false; },
-        error: () => { this.isLoading = false; }
-      });
+    this.http.get<any[]>(`${environment.apiUrl}/auth/users`).subscribe({
+      next: (users) => {
+        this.stats = {
+          totalUsers: users.length,
+          totalInstructors: users.filter(u => u.role === 'Instructor').length,
+          totalStudents: users.filter(u => u.role === 'Student').length
+        };
+        this.isLoading = false;
+      },
+      error: () => { this.isLoading = false; }
+    });
   }
 }

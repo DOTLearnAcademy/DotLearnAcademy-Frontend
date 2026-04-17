@@ -147,7 +147,7 @@
     <div class="course-card" *ngFor="let course of courses">
       <div class="course-card-header">
         <div class="course-emoji">📘</div>
-        <span class="course-badge" [ngClass]="getStateBadgeClass(course.state)">{{ course.state }}</span>
+        <span class="course-badge" [ngClass]="getStateBadgeClass(course.state)">{{ getStateLabel(course.state) }}</span>
       </div>
       <div class="course-card-body">
         <h3 class="course-title">{{ course.title }}</h3>
@@ -171,8 +171,10 @@
         <button class="action-btn" (click)="navigateToCurriculum(course.id)" title="Edit Curriculum">
           <span>📝</span> Curriculum
         </button>
-        <button class="action-btn action-btn-success" *ngIf="course.state === 'Draft'"
-          (click)="publish(course.id)" title="Publish">
+        <!-- Show Publish for Draft courses -->
+        <button class="action-btn action-btn-success"
+          *ngIf="course.state === 'Draft'"
+          (click)="publish(course.id)" title="Publish Course">
           <span>🚀</span> Publish
         </button>
         <button class="action-btn action-btn-warn" *ngIf="course.state !== 'Archived'"
