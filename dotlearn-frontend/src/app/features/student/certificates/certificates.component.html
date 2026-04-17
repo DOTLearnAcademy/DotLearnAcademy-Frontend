@@ -41,7 +41,7 @@
 
       <div class="cert-body">
         <div class="cert-label">Certificate</div>
-        <h3>{{ cert.courseId }}</h3>
+        <h3>{{ cert.courseName }}</h3>
         <p class="cert-subtext">
           Official course completion certificate issued by DOTLearn Academy.
         </p>
@@ -55,7 +55,7 @@
       <div class="cert-meta">
         <div class="meta-item">
           <span>Issued On</span>
-          <strong>{{ cert.createdAt | date:'mediumDate' }}</strong>
+          <strong>{{ cert.issuedAt | date:'mediumDate' }}</strong>
         </div>
       </div>
 

@@ -5,9 +5,11 @@ import { environment } from '../../../../environments/environment';
 interface Certificate {
   id: string;
   courseId: string;
+  studentName: string;
+  courseName: string;
   verificationCode: string;
-  createdAt: string;
-  pdfUrl?: string;
+  issuedAt: string;
+  certificateUrl?: string;
 }
 
 @Component({
@@ -44,7 +46,7 @@ export class CertificatesComponent implements OnInit {
       return;
     }
 
-    this.http.get<Certificate[]>(`${environment.apiUrl}/certificates/student/${userId}`)
+    this.http.get<Certificate[]>(`${environment.apiUrl}/certificates/my`)
       .subscribe({
         next: data => {
           this.certificates = data ?? [];
@@ -57,8 +59,8 @@ export class CertificatesComponent implements OnInit {
   }
 
   download(cert: Certificate) {
-    if (cert.pdfUrl) {
-      window.open(cert.pdfUrl, '_blank');
+    if (cert.certificateUrl) {
+      window.open(cert.certificateUrl, '_blank');
     }
   }
 
