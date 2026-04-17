@@ -1,42 +1,36 @@
 <div class="profile-page">
   <div class="page-header">
-    <h1>Profile Settings</h1>
+    <h1>Profile</h1>
   </div>
 
   <mat-card class="profile-card">
     <mat-card-content>
+      <!-- Avatar display only (no upload) -->
       <div class="avatar-section">
         <div class="avatar-circle">
-          <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Profile" referrerpolicy="no-referrer" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          <img *ngIf="avatarUrl" [src]="avatarUrl" alt="Profile"
+               referrerpolicy="no-referrer"
+               style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
           <mat-icon *ngIf="!avatarUrl">person</mat-icon>
         </div>
-        <button mat-stroked-button (click)="avatarInput.click()">
-          <mat-icon>upload</mat-icon> Upload Avatar
-        </button>
-        <input #avatarInput type="file" accept="image/*"
-               (change)="uploadAvatar($event)" hidden>
+        <div class="user-name-display">{{ user.fullName }}</div>
       </div>
 
-      <div class="success-message" *ngIf="successMessage">
-        {{ successMessage }}
+      <!-- Read-only info rows -->
+      <div class="info-row">
+        <span class="info-label">Full Name</span>
+        <span class="info-value">{{ user.fullName || '—' }}</span>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Full Name</mat-label>
-          <input matInput formControlName="fullName">
-        </mat-form-field>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value">{{ user.email || '—' }}</span>
+      </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email">
-        </mat-form-field>
-
-        <button mat-raised-button color="primary" type="submit"
-                [disabled]="isLoading || form.invalid">
-          Save Changes
-        </button>
-      </form>
+      <div class="info-row">
+        <span class="info-label">Role</span>
+        <span class="info-value role-badge">{{ user.role || '—' }}</span>
+      </div>
     </mat-card-content>
   </mat-card>
 </div>
