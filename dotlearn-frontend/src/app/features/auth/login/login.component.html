@@ -36,6 +36,11 @@
           <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
         </button>
 
+        <div *ngIf="errorMessage" class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
         <div class="auth-footer">
           <span>Don't have an account?</span>
           <a routerLink="/auth/register">Create one</a>
