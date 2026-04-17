@@ -99,7 +99,12 @@ export class CheckoutComponent implements OnInit {
         error: (err) => {
           this.isProcessing = false;
           if (err.status === 409) {
-            this.errorMessage = 'You already own this course.';
+            const apiError = err.error?.error || '';
+            if (apiError.toLowerCase().includes('already purchased') || apiError.toLowerCase().includes('already own')) {
+              this.alreadyOwned = true;
+            } else {
+              this.errorMessage = apiError || 'You already own this course.';
+            }
             return;
           }
           this.errorMessage = err.error?.error || 'Could not initiate checkout. Please try again.';
