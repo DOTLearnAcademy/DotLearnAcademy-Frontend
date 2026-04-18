@@ -1,0 +1,79 @@
+<div class="purchases-page">
+  <section class="purchases-hero">
+    <div class="hero-copy">
+      <div class="hero-badge">
+        <mat-icon>receipt_long</mat-icon>
+        <span>Purchase History</span>
+      </div>
+
+      <h1>Track every order and payment status</h1>
+      <p>
+        Review your previous course purchases, payment outcomes, and order timeline
+        in a cleaner, easier-to-scan history view.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="mini-stat">
+        <span>Total Orders</span>
+        <strong>{{ payments.length }}</strong>
+      </div>
+      <div class="mini-stat">
+        <span>Succeeded</span>
+        <strong>{{ payments.filter(p => p.status === 'Succeeded').length }}</strong>
+      </div>
+    </div>
+  </section>
+
+  <mat-progress-bar
+    mode="indeterminate"
+    *ngIf="isLoading"
+    class="loading-bar">
+  </mat-progress-bar>
+
+  <section class="purchase-list" *ngIf="!isLoading && payments.length > 0">
+    <article class="purchase-card" *ngFor="let p of payments">
+      <div class="purchase-main">
+        <div class="purchase-icon">
+          <mat-icon>
+            {{ p.status === 'Succeeded' ? 'check_circle' : p.status === 'Failed' ? 'cancel' : 'sync' }}
+          </mat-icon>
+        </div>
+
+        <div class="purchase-info">
+          <div class="purchase-label">Course Purchase</div>
+          <h3>{{ p.courseId }}</h3>
+          <div class="purchase-meta">
+            <span>{{ p.createdAt | date:'mediumDate' }}</span>
+            <span class="dot"></span>
+            <span>{{ p.currency }} {{ p.amount }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="purchase-side">
+        <div
+          class="status-badge"
+          [class.success]="p.status === 'Succeeded'"
+          [class.failed]="p.status === 'Failed'"
+          [class.refunded]="p.status === 'Refunded'">
+          <mat-icon>
+            {{ p.status === 'Succeeded' ? 'task_alt' : p.status === 'Failed' ? 'error' : 'restart_alt' }}
+          </mat-icon>
+          <span>{{ p.status }}</span>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="empty-state" *ngIf="!isLoading && payments.length === 0">
+    <div class="empty-icon">
+      <mat-icon>shopping_bag</mat-icon>
+    </div>
+    <h3>Start exploring courses to begin your learning journey 🚀</h3>
+    <a routerLink="/courses" class="empty-cta">
+      <mat-icon>travel_explore</mat-icon>
+      <span>Browse Courses</span>
+    </a>
+  </section>
+</div>

@@ -1,0 +1,80 @@
+<div class="users-page">
+  <div class="page-header">
+    <h1>User Management</h1>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Search users</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Name or email">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Filter by role</mat-label>
+      <mat-select [formControl]="roleControl">
+        <mat-option value="">All Roles</mat-option>
+        <mat-option value="Student">Student</mat-option>
+        <mat-option value="Instructor">Instructor</mat-option>
+        <mat-option value="Admin">Admin</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="banner success" *ngIf="actionMessage">{{ actionMessage }}</div>
+  <div class="banner error" *ngIf="actionError">{{ actionError }}</div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <mat-table [dataSource]="users" *ngIf="!isLoading" class="users-table">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+      <mat-cell *matCellDef="let u">{{ u.fullName }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+      <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+      <mat-cell *matCellDef="let u">{{ u.email }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="role">
+      <mat-header-cell *matHeaderCellDef>Role</mat-header-cell>
+      <mat-cell *matCellDef="let u">
+        <mat-chip class="role-chip">{{ u.role }}</mat-chip>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+      <mat-cell *matCellDef="let u">
+        <mat-chip class="status-chip" [ngClass]="u.isActive ? 'status-active' : 'status-suspended'">
+          {{ u.isActive ? 'Active' : 'Suspended' }}
+        </mat-chip>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+      <mat-cell *matCellDef="let u">
+        <button mat-icon-button *ngIf="u.isActive" (click)="suspend(u.id)"
+                matTooltip="Suspend"
+                [disabled]="isActionLoading || u.role === 'Admin' || isCurrentUser(u.id)">
+          <mat-icon>block</mat-icon>
+        </button>
+        <button mat-icon-button *ngIf="!u.isActive" (click)="unsuspend(u.id)"
+                matTooltip="Unsuspend" color="accent"
+                [disabled]="isActionLoading || u.role === 'Admin' || isCurrentUser(u.id)">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="delete(u.id)"
+                matTooltip="Delete"
+                [disabled]="isActionLoading || u.role === 'Admin' || isCurrentUser(u.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+</div>

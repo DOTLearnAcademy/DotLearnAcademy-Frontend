@@ -1,0 +1,70 @@
+<div class="instructor-dashboard">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="greeting">
+        <div class="greeting-badge">🎓 Instructor Portal</div>
+        <h1>Welcome back, <span class="highlight">{{ instructorName }}</span>!</h1>
+        <p>Here's how your courses are performing today.</p>
+      </div>
+      <div class="header-actions">
+        <a routerLink="/instructor/courses" class="btn-primary">
+          <span>+</span> Create Course
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading" class="loading-bar"></mat-progress-bar>
+
+  <div *ngIf="!isLoading" class="dashboard-body">
+    <!-- KPI Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-students">
+          <span class="kpi-emoji">👥</span>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ stats.totalStudents | number }}</div>
+          <div class="kpi-label">Total Students</div>
+          <div class="kpi-trend kpi-up">↑ Growing</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-revenue">
+          <span class="kpi-emoji">💰</span>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">₹{{ stats.totalRevenue | number }}</div>
+          <div class="kpi-label">Total Revenue</div>
+          <div class="kpi-trend kpi-up">↑ This month</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-enrollments">
+          <span class="kpi-emoji">🎓</span>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ stats.activeEnrollments | number }}</div>
+          <div class="kpi-label">Active Enrollments</div>
+          <div class="kpi-trend kpi-up">↑ Active</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrap kpi-rating">
+          <span class="kpi-emoji">⭐</span>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ stats.averageRating | number:'1.1-1' }}</div>
+          <div class="kpi-label">Average Rating</div>
+          <div class="kpi-trend rating-stars">★★★★☆</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

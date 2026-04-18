@@ -1,0 +1,188 @@
+<div class="courses-page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>My Courses</h1>
+      <p class="header-subtitle">Manage, publish, and track your courses</p>
+    </div>
+    <button class="btn-create" (click)="openWizard()">
+      <span>+</span> Create Course
+    </button>
+  </div>
+
+  <!-- Success / Error Banners -->
+  <div class="banner banner-success" *ngIf="successMessage">
+    ✅ {{ successMessage }}
+  </div>
+  <div class="banner banner-error" *ngIf="errorMessage && !showWizard">
+    ❌ {{ errorMessage }}
+  </div>
+
+  <!-- ── Create Course Wizard Overlay ── -->
+  <div class="wizard-overlay" *ngIf="showWizard" (click)="closeWizard()">
+    <div class="wizard-card" (click)="$event.stopPropagation()">
+
+      <div class="wizard-header">
+        <div>
+          <h2>Create New Course</h2>
+          <p>Fill in the details below to launch your course</p>
+        </div>
+        <button class="close-btn" (click)="closeWizard()">✕</button>
+      </div>
+
+      <!-- Step indicators -->
+      <div class="step-indicators">
+        <div class="step-indicator" [class.active]="currentStep === 0" [class.done]="currentStep > 0">
+          <div class="step-num">1</div>
+          <span>Basic Info</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-indicator" [class.active]="currentStep === 1">
+          <div class="step-num">2</div>
+          <span>Pricing</span>
+        </div>
+      </div>
+
+      <div class="wizard-error" *ngIf="errorMessage">❌ {{ errorMessage }}</div>
+
+      <!-- Step 1: Basic Info -->
+      <div *ngIf="currentStep === 0">
+        <form [formGroup]="step1Form" class="wizard-form">
+          <div class="field-group">
+            <label>Course Title *</label>
+            <input type="text" formControlName="title" placeholder="e.g., Complete Python Bootcamp" class="field-input">
+            <span class="field-error" *ngIf="step1Form.get('title')?.invalid && step1Form.get('title')?.touched">
+              Title must be at least 5 characters
+            </span>
+          </div>
+
+          <div class="field-group">
+            <label>Description *</label>
+            <textarea formControlName="description" rows="4"
+              placeholder="What will students learn? Be specific and compelling..." class="field-input"></textarea>
+            <span class="field-error" *ngIf="step1Form.get('description')?.invalid && step1Form.get('description')?.touched">
+              Description must be at least 20 characters
+            </span>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>Category *</label>
+              <select formControlName="category" class="field-input field-select">
+                <option value="">Select category...</option>
+                <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label>Level *</label>
+              <select formControlName="level" class="field-input field-select">
+                <option value="">Select level...</option>
+                <option *ngFor="let l of levels" [value]="l">{{ l }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button type="button" class="btn-ghost" (click)="closeWizard()">Cancel</button>
+            <button type="button" class="btn-primary-action" [disabled]="step1Form.invalid"
+              (click)="currentStep = 1">
+              Next: Pricing →
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Step 2: Pricing -->
+      <div *ngIf="currentStep === 1">
+        <form [formGroup]="step2Form" class="wizard-form">
+          <div class="field-group">
+            <label>Price (INR)</label>
+            <div class="price-input-wrap">
+              <span class="price-symbol">₹</span>
+              <input type="number" formControlName="price" min="0" class="field-input price-input"
+                placeholder="0 for free course">
+            </div>
+            <p class="field-hint">💡 Set to 0 to make this a free course available to all students</p>
+          </div>
+
+          <div class="pricing-preview">
+            <div class="preview-label">Preview</div>
+            <div class="preview-value">
+              {{ step2Form.value.price === 0 || !step2Form.value.price ? '🎁 Free' : '₹' + step2Form.value.price }}
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button type="button" class="btn-ghost" (click)="currentStep = 0">← Back</button>
+            <button type="button" class="btn-primary-action"
+              [disabled]="step2Form.invalid || isSubmitting"
+              (click)="createCourse()">
+              <span *ngIf="!isSubmitting">🚀 Create Course</span>
+              <span *ngIf="isSubmitting">Creating...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-wrap" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading your courses...</span>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && courses.length === 0">
+    <div class="empty-icon">📚</div>
+    <h3>No courses yet</h3>
+    <p>Create your first course and start teaching thousands of students.</p>
+    <button class="btn-create" (click)="openWizard()">+ Create Your First Course</button>
+  </div>
+
+  <!-- Courses Grid -->
+  <div class="courses-grid" *ngIf="!isLoading && courses.length > 0">
+    <div class="course-card" *ngFor="let course of courses">
+      <div class="course-card-header">
+        <div class="course-emoji">📘</div>
+        <span class="course-badge" [ngClass]="getStateBadgeClass(course.state)">{{ getStateLabel(course.state) }}</span>
+      </div>
+      <div class="course-card-body">
+        <h3 class="course-title">{{ course.title }}</h3>
+        <p class="course-desc">{{ course.description | slice:0:100 }}{{ (course.description || '').length > 100 ? '...' : '' }}</p>
+        <div class="course-meta">
+          <span class="meta-chip">{{ course.category }}</span>
+          <span class="meta-chip">{{ course.level }}</span>
+        </div>
+        <div class="course-stats">
+          <div class="stat-item">
+            <span class="stat-icon">👥</span>
+            <span>{{ course.enrollmentCount || 0 }} students</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-icon">💰</span>
+            <span>{{ course.price === 0 ? 'Free' : '₹' + course.price }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="course-card-actions">
+        <button class="action-btn" (click)="navigateToCurriculum(course.id)" title="Edit Curriculum">
+          <span>📝</span> Curriculum
+        </button>
+        <!-- Show Publish for Draft courses -->
+        <button class="action-btn action-btn-success"
+          *ngIf="course.state === 'Draft'"
+          (click)="publish(course.id)" title="Publish Course">
+          <span>🚀</span> Publish
+        </button>
+        <button class="action-btn action-btn-warn" *ngIf="course.state !== 'Archived'"
+          (click)="archive(course.id)" title="Archive">
+          <span>📦</span> Archive
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

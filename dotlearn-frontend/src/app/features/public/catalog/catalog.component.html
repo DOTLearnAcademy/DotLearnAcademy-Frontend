@@ -1,0 +1,157 @@
+<div class="catalog-page">
+  <section class="catalog-hero">
+    <div class="hero-copy">
+      <div class="hero-badge">
+        <mat-icon>travel_explore</mat-icon>
+        <span>Course Catalog</span>
+      </div>
+
+      <h1>Discover courses that move your career forward</h1>
+      <p>
+        Explore expertly designed learning paths across development, cloud,
+        architecture, data, and modern software engineering.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span>Total Courses</span>
+        <strong>{{ total }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>Filters</span>
+        <strong>Smart Search</strong>
+      </div>
+    </div>
+  </section>
+
+  <div class="catalog-layout">
+    <!-- Filters -->
+    <aside class="catalog-sidebar">
+      <div class="sidebar-card">
+        <div class="sidebar-head">
+          <h3>Refine Results</h3>
+          <p>Search and filter courses quickly.</p>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Search courses</mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Title, topic, keyword">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Category</mat-label>
+          <mat-select [formControl]="categoryControl">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let cat of categories" [value]="cat">{{ cat }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Level</mat-label>
+          <mat-select [formControl]="levelControl">
+            <mat-option value="">All Levels</mat-option>
+            <mat-option *ngFor="let lvl of levels" [value]="lvl">{{ lvl }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button class="clear-btn" type="button" (click)="clearFilters()">
+          <mat-icon>filter_alt_off</mat-icon>
+          <span>Clear Filters</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="catalog-main">
+      <div class="catalog-toolbar">
+        <div class="results-copy">
+          <h2>{{ total }} courses found</h2>
+          <p>Browse curated learning opportunities at your own pace.</p>
+        </div>
+
+        <div class="sort-box">
+          <mat-form-field appearance="outline">
+            <mat-label>Sort by</mat-label>
+            <mat-select [formControl]="sortControl">
+              <mat-option *ngFor="let opt of sortOptions" [value]="opt.value">
+                {{ opt.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-progress-bar
+        mode="indeterminate"
+        *ngIf="isLoading"
+        class="loading-bar">
+      </mat-progress-bar>
+
+      <div class="course-grid" *ngIf="!isLoading && courses.length > 0">
+        <article
+          *ngFor="let course of courses"
+          class="course-card"
+          [routerLink]="['/courses', course.id]">
+
+          <div class="course-card-top">
+            <div class="course-badges">
+              <span class="badge">{{ course.category }}</span>
+              <span class="badge level">{{ course.level }}</span>
+            </div>
+
+            <div class="course-rating">
+              <mat-icon>star</mat-icon>
+              <span>{{ course.averageRating | number:'1.1-1' }}</span>
+            </div>
+          </div>
+
+          <div class="course-body">
+            <h3>{{ course.title }}</h3>
+            <p>{{ course.description | slice:0:135 }}...</p>
+          </div>
+
+          <div class="course-meta">
+            <div class="meta-item">
+              <mat-icon>groups</mat-icon>
+              <span>{{ course.enrollmentCount }} students</span>
+            </div>
+          </div>
+
+          <div class="course-footer">
+            <div class="price">
+              {{ course.price === 0 ? 'Free' : ('₹' + course.price) }}
+            </div>
+
+            <div class="view-link">
+              <span>View Course</span>
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <section class="empty-state" *ngIf="!isLoading && courses.length === 0">
+        <div class="empty-icon">
+          <mat-icon>menu_book</mat-icon>
+        </div>
+        <h3>No matching courses found</h3>
+        <p>Try changing your filters or search term to explore more courses.</p>
+        <button class="empty-cta" type="button" (click)="clearFilters()">
+          <mat-icon>refresh</mat-icon>
+          <span>Reset Filters</span>
+        </button>
+      </section>
+
+      <div class="paginator-wrap" *ngIf="!isLoading && total > pageSize">
+        <mat-paginator
+          [length]="total"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[12, 24, 48]"
+          (page)="onPageChange($event)">
+        </mat-paginator>
+      </div>
+    </main>
+  </div>
+</div>

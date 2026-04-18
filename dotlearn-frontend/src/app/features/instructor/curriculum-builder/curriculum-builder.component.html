@@ -1,0 +1,244 @@
+<div class="curriculum-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <a class="back-link" routerLink="/instructor/courses">
+        ← Back to Courses
+      </a>
+      <h1>Curriculum Builder</h1>
+      <p class="header-subtitle">Drag lessons to reorder • Click to upload video content</p>
+    </div>
+    <button class="btn-add-lesson" (click)="showAddLesson = true">
+      + Add Lesson
+    </button>
+  </div>
+
+  <!-- Banners -->
+  <div class="banner banner-success" *ngIf="successMessage">✅ {{ successMessage }}</div>
+  <div class="banner banner-error" *ngIf="errorMessage">❌ {{ errorMessage }}</div>
+
+  <!-- ─── Add Lesson Panel ─── -->
+  <div class="add-lesson-overlay" *ngIf="showAddLesson" (click)="showAddLesson = false">
+    <div class="add-lesson-card" (click)="$event.stopPropagation()">
+      <div class="card-header">
+        <h3>Add New Lesson</h3>
+        <button class="close-btn" (click)="showAddLesson = false">✕</button>
+      </div>
+
+      <form [formGroup]="lessonForm" class="lesson-form">
+        <!-- Title -->
+        <div class="field-group">
+          <label>Lesson Title *</label>
+          <input type="text" formControlName="title" class="field-input"
+            placeholder="e.g., Introduction to Variables">
+          <span class="field-error" *ngIf="lessonForm.get('title')?.invalid && lessonForm.get('title')?.touched">
+            Title must be at least 3 characters
+          </span>
+        </div>
+
+        <!-- Type + Preview -->
+        <div class="field-row">
+          <div class="field-group">
+            <label>Content Type *</label>
+            <select formControlName="type" class="field-input field-select">
+              <option *ngFor="let t of lessonTypes" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+          <div class="field-group toggle-group">
+            <label>Free Preview</label>
+            <div class="toggle-row">
+              <label class="toggle">
+                <input type="checkbox" formControlName="isPreview">
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label">{{ lessonForm.value.isPreview ? 'Yes' : 'No' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description (for Video / Text) -->
+        <div class="field-group" *ngIf="!isQuizType">
+          <label>Description (optional)</label>
+          <textarea formControlName="description" class="field-input" rows="3"
+            placeholder="Brief overview of this lesson..."></textarea>
+        </div>
+
+        <!-- ─── Quiz Question Builder ─── -->
+        <div class="quiz-builder" *ngIf="isQuizType">
+          <div class="quiz-builder-header">
+            <span class="quiz-builder-label">❓ Quiz Questions</span>
+            <button type="button" class="btn-add-question" (click)="addQuestion()">+ Add Question</button>
+          </div>
+
+          <div class="quiz-empty" *ngIf="quizQuestions.length === 0">
+            Click "+ Add Question" to start building your quiz.
+          </div>
+
+          <div class="question-card" *ngFor="let q of quizQuestions.controls; let qi = index" [formGroup]="$any(q)">
+            <div class="question-header">
+              <span class="question-num">Q{{ qi + 1 }}</span>
+              <button type="button" class="btn-remove-q" (click)="removeQuestion(qi)">✕</button>
+            </div>
+            <div class="field-group">
+              <label>Question Text *</label>
+              <input type="text" formControlName="question" class="field-input"
+                placeholder="e.g., What is the output of print('Hello')?">
+            </div>
+            <div class="options-grid">
+              <div class="field-group">
+                <label>Option A *</label>
+                <input type="text" formControlName="optionA" class="field-input" placeholder="Option A">
+              </div>
+              <div class="field-group">
+                <label>Option B *</label>
+                <input type="text" formControlName="optionB" class="field-input" placeholder="Option B">
+              </div>
+              <div class="field-group">
+                <label>Option C</label>
+                <input type="text" formControlName="optionC" class="field-input" placeholder="Option C (optional)">
+              </div>
+              <div class="field-group">
+                <label>Option D</label>
+                <input type="text" formControlName="optionD" class="field-input" placeholder="Option D (optional)">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Correct Answer *</label>
+              <select formControlName="correct" class="field-input field-select">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="button" class="btn-ghost" (click)="showAddLesson = false">Cancel</button>
+          <button type="button" class="btn-primary-action"
+            [disabled]="lessonForm.invalid || isSubmittingLesson" (click)="addLesson()">
+            <span *ngIf="!isSubmittingLesson">🎯 Add Lesson</span>
+            <span *ngIf="isSubmittingLesson">Adding...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── Video Player Modal ─── -->
+  <div class="video-modal-overlay" *ngIf="showVideoModal" (click)="closeVideoModal()">
+    <div class="video-modal-card" (click)="$event.stopPropagation()">
+      <div class="video-modal-header">
+        <span class="video-modal-title">🎬 {{ viewingLessonTitle }}</span>
+        <button class="close-btn" (click)="closeVideoModal()">✕</button>
+      </div>
+      <div class="video-wrap">
+        <div class="video-loading" *ngIf="!viewingVideoUrl">
+          <div class="spinner"></div>
+          <span>Loading video...</span>
+        </div>
+        <video *ngIf="viewingVideoUrl" [src]="viewingVideoUrl" controls autoplay class="video-player">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-wrap" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading curriculum...</span>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && lessons.length === 0">
+    <div class="empty-icon">🎬</div>
+    <h3>No lessons yet</h3>
+    <p>Start by adding your first lesson to build the course curriculum.</p>
+    <button class="btn-add-lesson" (click)="showAddLesson = true">+ Add First Lesson</button>
+  </div>
+
+  <!-- ─── Lesson List ─── -->
+  <div *ngIf="!isLoading && lessons.length > 0">
+    <div class="lessons-count">{{ lessons.length }} lesson{{ lessons.length !== 1 ? 's' : '' }}</div>
+
+    <div cdkDropList (cdkDropListDropped)="drop($event)" class="lesson-list">
+      <div *ngFor="let lesson of lessons; let i = index" cdkDrag class="lesson-item">
+
+        <!-- Drag placeholder -->
+        <div class="cdk-drag-placeholder" *cdkDragPlaceholder></div>
+
+        <div class="lesson-number" cdkDragHandle>{{ i + 1 }}</div>
+        <div class="drag-handle" cdkDragHandle>⠿</div>
+
+        <div class="lesson-info">
+          <div class="lesson-title-row">
+            <span class="lesson-title">{{ lesson.title }}</span>
+            <span *ngIf="lesson.isPreview" class="preview-badge">Free Preview</span>
+          </div>
+          <div class="lesson-meta">
+            <span class="type-badge" [ngClass]="'type-' + lesson.type.toLowerCase()">
+              {{ lesson.type === 'Video' ? '🎬' : lesson.type === 'Text' ? '📄' : '❓' }}
+              {{ lesson.type }}
+            </span>
+            <span *ngIf="lesson.durationSeconds" class="duration">
+              {{ formatDuration(lesson.durationSeconds) }}
+            </span>
+            <!-- Quiz question count -->
+            <span *ngIf="lesson.type === 'Quiz' && lesson.textContent" class="duration">
+              {{ parseQuizQuestions(lesson).length }} question{{ parseQuizQuestions(lesson).length !== 1 ? 's' : '' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="lesson-actions">
+          <!-- Upload progress -->
+          <div class="upload-progress-wrap" *ngIf="uploadingLessonId === lesson.id">
+            <div class="upload-track">
+              <div class="upload-fill" [style.width.%]="uploadProgress"></div>
+            </div>
+            <span class="upload-pct">{{ uploadProgress }}%</span>
+          </div>
+
+          <!-- Video controls -->
+          <ng-container *ngIf="lesson.type === 'Video' && uploadingLessonId !== lesson.id">
+
+            <!-- Video uploaded: show badge + View + Re-upload -->
+            <ng-container *ngIf="lesson.videoS3Key">
+              <span class="uploaded-badge">✅ Uploaded</span>
+              <button class="action-btn action-btn-view" (click)="viewVideo(lesson)" title="Watch video">
+                👁 View
+              </button>
+              <label class="action-btn" title="Re-upload video" style="cursor:pointer">
+                🔄
+                <input type="file" accept="video/*" hidden (change)="uploadVideo(lesson.id, $event)">
+              </label>
+            </ng-container>
+
+            <!-- Not uploaded yet -->
+            <label class="action-btn" *ngIf="!lesson.videoS3Key" title="Upload video">
+              🎬 Upload
+              <input type="file" accept="video/*" hidden (change)="uploadVideo(lesson.id, $event)">
+            </label>
+
+          </ng-container>
+
+          <!-- Quiz: show question count badge -->
+          <ng-container *ngIf="lesson.type === 'Quiz' && uploadingLessonId !== lesson.id">
+            <!-- Future: edit quiz questions -->
+          </ng-container>
+
+          <!-- Delete -->
+          <button class="action-btn action-btn-danger" (click)="deleteLesson(lesson.id)"
+            *ngIf="uploadingLessonId !== lesson.id">
+            <span>🗑</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

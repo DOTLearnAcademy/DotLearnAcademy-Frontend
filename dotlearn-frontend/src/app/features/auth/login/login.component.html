@@ -1,0 +1,51 @@
+<div class="auth-page">
+  <div class="auth-layout">
+    <!-- Left Side -->
+    <div class="auth-brand">
+      <div class="brand-box">
+        <div class="brand-mark">D</div>
+        <h1>Welcome back</h1>
+        <p>
+          Continue your learning journey, track progress, and unlock your next milestone.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="auth-form-wrap">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card">
+        <h2>Sign in</h2>
+        <p class="subtext">Access your account to continue learning</p>
+
+        <div id="google-btn" class="google-login-btn"></div>
+        <div class="divider"><span>OR</span></div>
+        <br/>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="password">
+        </mat-form-field>
+
+        <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading">
+          <mat-icon>login</mat-icon>
+          <span>{{ isLoading ? 'Signing in...' : 'Sign In' }}</span>
+        </button>
+
+        <div *ngIf="errorMessage" class="error-banner">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage }}</span>
+        </div>
+
+        <div class="auth-footer">
+          <span>Don't have an account?</span>
+          <a routerLink="/auth/register">Create one</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

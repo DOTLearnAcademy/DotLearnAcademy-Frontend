@@ -1,0 +1,46 @@
+<div class="analytics-page">
+  <div class="page-header">
+    <h1>Platform Analytics</h1>
+    <p>Admin overview — moderation and user metrics</p>
+  </div>
+
+  <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
+
+  <div class="kpi-grid" *ngIf="!isLoading">
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-icon-wrap">
+          <mat-icon class="kpi-icon">group</mat-icon>
+        </div>
+        <div class="kpi-value">{{ stats.totalUsers }}</div>
+        <div class="kpi-label">Total Users</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-icon-wrap">
+          <mat-icon class="kpi-icon">school</mat-icon>
+        </div>
+        <div class="kpi-value">{{ stats.totalInstructors }}</div>
+        <div class="kpi-label">Active Instructors</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-icon-wrap">
+          <mat-icon class="kpi-icon">person</mat-icon>
+        </div>
+        <div class="kpi-value">{{ stats.totalStudents }}</div>
+        <div class="kpi-label">Registered Students</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="quick-links">
+    <a mat-raised-button color="primary" routerLink="/admin/users">
+      <mat-icon>manage_accounts</mat-icon> Manage Users
+    </a>
+  </div>
+</div>

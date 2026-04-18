@@ -1,0 +1,147 @@
+<div class="learning-page">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <div class="hero-badge">
+        <mat-icon>school</mat-icon>
+        <span>Student Workspace</span>
+      </div>
+
+      <h1>
+        Welcome back,
+        <span class="name-accent">{{ studentName }}</span>
+      </h1>
+
+      <p class="hero-text">
+        Track your active courses, continue from where you left off,
+        and monitor your learning progress in one place.
+      </p>
+
+      <div class="hero-actions">
+        <a routerLink="/courses" class="explore-btn">
+          <mat-icon>travel_explore</mat-icon>
+          <span>Explore Courses</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Courses</div>
+        <div class="stat-value">{{ enrollments.length }}</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">In Progress</div>
+        <div class="stat-value">
+          {{ enrollments.filter(e => (e.progressPercent || 0) > 0 && (e.progressPercent || 0) < 100).length }}
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value">
+          {{ enrollments.filter(e => (e.progressPercent || 0) >= 100).length }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <mat-progress-bar
+    mode="indeterminate"
+    *ngIf="isLoading"
+    class="loading-bar">
+  </mat-progress-bar>
+
+  <section class="filters-card" *ngIf="!isLoading">
+    <button
+      type="button"
+      class="filter-pill"
+      [class.active]="activeTab === 'all'"
+      (click)="setTab('all')">
+      All Courses
+    </button>
+
+    <button
+      type="button"
+      class="filter-pill"
+      [class.active]="activeTab === 'in-progress'"
+      (click)="setTab('in-progress')">
+      In Progress
+    </button>
+
+    <button
+      type="button"
+      class="filter-pill"
+      [class.active]="activeTab === 'completed'"
+      (click)="setTab('completed')">
+      Completed
+    </button>
+  </section>
+
+  <section class="course-grid" *ngIf="!isLoading && filteredEnrollments.length > 0">
+    <article class="course-card" *ngFor="let enrollment of filteredEnrollments">
+      <div class="course-top">
+        <div class="course-ident">
+          <div class="course-icon">
+            {{ (courseNames[enrollment.courseId] || enrollment.courseId).charAt(0) | uppercase }}
+          </div>
+
+          <div class="course-meta">
+            <div class="course-label">Course</div>
+            <h3>{{ courseNames[enrollment.courseId] || enrollment.courseId }}</h3>
+          </div>
+        </div>
+
+        <div
+          class="status-chip"
+          [class.completed]="(enrollment.progressPercent || 0) >= 100">
+          <mat-icon>{{ (enrollment.progressPercent || 0) >= 100 ? 'check_circle' : 'autorenew' }}</mat-icon>
+          <span>{{ (enrollment.progressPercent || 0) >= 100 ? 'Completed' : 'Active' }}</span>
+        </div>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-head">
+          <span>Progress</span>
+          <strong *ngIf="(enrollment.progressPercent || 0) < 100">{{ enrollment.progressPercent || 0 }}%</strong>
+          <strong *ngIf="(enrollment.progressPercent || 0) >= 100" style="color: #86efac;">✔ Completed</strong>
+        </div>
+
+        <div class="progress-track">
+          <div
+            class="progress-fill"
+            [class.completed]="(enrollment.progressPercent || 0) >= 100"
+            [style.width.%]="enrollment.progressPercent || 0">
+          </div>
+        </div>
+
+        <div class="progress-meta">
+          {{ enrollment.completedLessons || 0 }} / {{ enrollment.totalLessons || 0 }} lessons completed
+        </div>
+      </div>
+
+      <div class="course-footer">
+        <div class="course-date">
+          Enrolled {{ enrollment.enrolledAt | date:'mediumDate' }}
+        </div>
+
+        <a
+          class="continue-btn"
+          [routerLink]="['/student/courses', enrollment.courseId, 'learn']"
+          [queryParams]="{ enrollmentId: enrollment.id }">
+          <mat-icon>{{ (enrollment.progressPercent || 0) >= 100 ? 'visibility' : 'play_arrow' }}</mat-icon>
+          <span>{{ (enrollment.progressPercent || 0) >= 100 ? 'Review' : 'Continue' }}</span>
+        </a>
+      </div>
+    </article>
+  </section>
+
+  <section class="empty-state" *ngIf="!isLoading && filteredEnrollments.length === 0">
+    <div class="empty-illustration">
+      <mat-icon>menu_book</mat-icon>
+    </div>
+    <h3>No courses here yet</h3>
+    <p>Pick a course and start learning with DOTLearn.</p>
+    <a routerLink="/courses" class="empty-cta">Browse Courses</a>
+  </section>
+</div>

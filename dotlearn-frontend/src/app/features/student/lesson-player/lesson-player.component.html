@@ -1,0 +1,251 @@
+<div class="lesson-shell">
+  <ng-container *ngIf="isLoading; else loadedState">
+    <div class="lesson-loading">
+      <div class="loading-orb"></div>
+      <h3>Preparing your workspace</h3>
+      <p>Loading lessons, progress, and course content…</p>
+    </div>
+  </ng-container>
+
+  <ng-template #loadedState>
+    <div class="lesson-layout">
+      <!-- Sidebar -->
+      <aside class="lesson-sidebar" data-cy="curriculum-sidebar">
+        <div class="sidebar-top">
+          <div class="sidebar-badge">
+            <mat-icon>menu_book</mat-icon>
+            <span>Curriculum</span>
+          </div>
+
+          <h2>{{ courseTitle || 'Course Lessons' }}</h2>
+
+          <div class="sidebar-progress-card">
+            <div class="sidebar-progress-head">
+              <span>Course Progress</span>
+              <strong>{{ progressPercent }}%</strong>
+            </div>
+
+            <div class="sidebar-progress-track">
+              <div class="sidebar-progress-fill" [style.width.%]="progressPercent"></div>
+            </div>
+
+            <div class="sidebar-progress-meta">
+              {{ completedLessonIds.size }} of {{ lessons.length }} lessons completed
+            </div>
+          </div>
+        </div>
+
+        <div class="lesson-list" *ngIf="lessons.length > 0; else noLessons">
+          <button
+            type="button"
+            class="lesson-item"
+            *ngFor="let lesson of lessons; let i = index"
+            [class.active]="selectedLesson?.id === lesson.id"
+            [class.completed]="isCompleted(lesson)"
+            (click)="selectLesson(lesson)">
+
+            <div class="lesson-item-left">
+              <div class="lesson-index">
+                <ng-container *ngIf="!isCompleted(lesson); else completedIcon">
+                  {{ i + 1 }}
+                </ng-container>
+                <ng-template #completedIcon>
+                  <mat-icon>check</mat-icon>
+                </ng-template>
+              </div>
+
+              <div class="lesson-copy">
+                <div class="lesson-type">{{ lesson.type }}</div>
+                <div class="lesson-title">{{ lesson.title }}</div>
+              </div>
+            </div>
+
+            <mat-icon class="lesson-arrow">chevron_right</mat-icon>
+          </button>
+        </div>
+
+        <ng-template #noLessons>
+          <div class="sidebar-empty">
+            <mat-icon>school</mat-icon>
+            <h4>No lessons yet</h4>
+            <p>The instructor has not added course content yet.</p>
+          </div>
+        </ng-template>
+      </aside>
+
+      <!-- Main workspace -->
+      <main class="lesson-main" data-cy="lesson-player">
+        <ng-container *ngIf="selectedLesson; else emptyViewer">
+          <div class="lesson-header-card">
+            <div class="lesson-header-copy">
+              <div class="lesson-header-badge">
+                <mat-icon>
+                  {{
+                    selectedLesson.type === 'Video'
+                      ? 'play_circle'
+                      : selectedLesson.type === 'Quiz'
+                      ? 'quiz'
+                      : 'article'
+                  }}
+                </mat-icon>
+                <span>{{ selectedLesson.type }} Lesson</span>
+              </div>
+
+              <h1>{{ selectedLesson.title }}</h1>
+              <p>
+                Focus on one lesson at a time. Complete it to keep your course
+                progress synced across sessions.
+              </p>
+            </div>
+
+            <button
+              class="mark-complete-btn"
+              *ngIf="selectedLesson.type !== 'Quiz'"
+              [class.done]="isCompleted(selectedLesson)"
+              (click)="markLessonComplete(selectedLesson)">
+              <mat-icon>{{ isCompleted(selectedLesson) ? 'check_circle' : 'task_alt' }}</mat-icon>
+              <span>{{ isCompleted(selectedLesson) ? 'Completed' : 'Mark Complete' }}</span>
+            </button>
+          </div>
+
+          <!-- Video lesson -->
+          <ng-container *ngIf="selectedLesson.type === 'Video'">
+            <section class="content-card video-card">
+              <div class="video-frame">
+                <ng-container *ngIf="videoUrl; else videoLoading">
+                  <video
+                    class="video-player"
+                    controls
+                    [src]="videoUrl">
+                  </video>
+                </ng-container>
+
+                <ng-template #videoLoading>
+                  <div class="media-placeholder">
+                    <mat-icon>movie</mat-icon>
+                    <h3>Loading video</h3>
+                    <p>Fetching your secure lesson stream…</p>
+                  </div>
+                </ng-template>
+              </div>
+            </section>
+          </ng-container>
+
+          <!-- Quiz lesson -->
+          <ng-container *ngIf="selectedLesson.type === 'Quiz'">
+            <section class="content-card quiz-card">
+              <div class="quiz-head">
+                <div>
+                  <h3>Quiz Challenge</h3>
+                  <p>Answer all questions and submit to complete this lesson.</p>
+                </div>
+
+                <div class="quiz-status" [class.done]="quizSubmitted">
+                  <mat-icon>{{ quizSubmitted ? 'verified' : 'pending_actions' }}</mat-icon>
+                  <span>{{ quizSubmitted ? 'Submitted' : 'Pending' }}</span>
+                </div>
+              </div>
+
+              <div class="quiz-list" *ngIf="quizQuestions.length > 0; else noQuiz">
+                <div class="quiz-question-card" *ngFor="let q of quizQuestions; let qi = index">
+                  <div class="question-no">Question {{ qi + 1 }}</div>
+                  <h4>{{ q.question }}</h4>
+
+                  <div class="quiz-options">
+                    <button
+                      type="button"
+                      class="quiz-option"
+                      *ngFor="let opt of getOptions(q)"
+                      [class.selected]="selectedAnswers[qi] === opt.key"
+                      (click)="selectAnswer(qi, opt.key)">
+                      <span class="option-key">{{ opt.key }}</span>
+                      <span class="option-text">{{ opt.val }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <ng-template #noQuiz>
+                <div class="empty-content">
+                  <mat-icon>quiz</mat-icon>
+                  <h3>No quiz content found</h3>
+                  <p>This lesson does not contain any quiz questions yet.</p>
+                </div>
+              </ng-template>
+
+              <div class="quiz-actions" *ngIf="quizQuestions.length > 0 && !quizSubmitted">
+                <button class="submit-quiz-btn" (click)="submitQuiz()">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>Submit Quiz & Mark Complete</span>
+                </button>
+              </div>
+            </section>
+          </ng-container>
+
+          <!-- Text / PDF lesson -->
+          <ng-container *ngIf="selectedLesson.type === 'Text' || selectedLesson.type === 'PDF'">
+            <section class="content-card text-card">
+              <div class="text-card-head">
+                <h3>Lesson Notes</h3>
+                <div class="text-status" [class.done]="isCompleted(selectedLesson)">
+                  <mat-icon>{{ isCompleted(selectedLesson) ? 'check_circle' : 'schedule' }}</mat-icon>
+                  <span>{{ isCompleted(selectedLesson) ? 'Completed' : 'In Progress' }}</span>
+                </div>
+              </div>
+
+              <div class="text-content" *ngIf="selectedLesson.textContent; else noText">
+                <p>{{ selectedLesson.textContent }}</p>
+              </div>
+
+              <ng-template #noText>
+                <div class="empty-content">
+                  <mat-icon>article</mat-icon>
+                  <h3>No content available</h3>
+                  <p>This lesson does not have any text content yet.</p>
+                </div>
+              </ng-template>
+            </section>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #emptyViewer>
+          <div class="empty-viewer">
+            <div class="empty-viewer-icon">
+              <mat-icon>auto_stories</mat-icon>
+            </div>
+            <h3>Select a lesson to begin</h3>
+            <p>Your learning workspace will appear here once you choose a lesson.</p>
+          </div>
+        </ng-template>
+      </main>
+    </div>
+
+    <!-- Certificate modal -->
+    <div class="certificate-overlay" *ngIf="showCertificate">
+      <div class="certificate-modal">
+        <button class="close-certificate" (click)="showCertificate = false">
+          <mat-icon>close</mat-icon>
+        </button>
+
+        <div class="certificate-icon">
+          <mat-icon>workspace_premium</mat-icon>
+        </div>
+
+        <h2>Course Completed</h2>
+        <p>
+          You completed this course successfully. Your certificate is now ready to view.
+        </p>
+
+        <div class="certificate-actions">
+          <a routerLink="/student/certificates" class="certificate-link">
+            <mat-icon>visibility</mat-icon>
+            <span>View Certificate</span>
+          </a>
+          <button class="secondary-close" (click)="showCertificate = false">
+            Continue Learning
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

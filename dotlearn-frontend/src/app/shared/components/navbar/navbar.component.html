@@ -1,0 +1,83 @@
+<nav class="dotlearn-navbar">
+  <div class="nav-inner">
+    <a routerLink="/home" class="brand">
+      <div class="brand-mark">D</div>
+      <div class="brand-text">
+        <span class="brand-main">DOTLearn</span>
+        <span class="brand-sub">Academy</span>
+      </div>
+    </a>
+
+    <div class="nav-center" *ngIf="isLoggedIn">
+      <ng-container *ngIf="userRole === 'Student'">
+        <a routerLink="/student/my-learning" routerLinkActive="active" class="nav-link">
+          <mat-icon>play_circle</mat-icon>
+          <span>My Learning</span>
+        </a>
+        <a routerLink="/courses" routerLinkActive="active" class="nav-link">
+          <mat-icon>travel_explore</mat-icon>
+          <span>Explore</span>
+        </a>
+        <a routerLink="/student/certificates" routerLinkActive="active" class="nav-link">
+          <mat-icon>workspace_premium</mat-icon>
+          <span>Certificates</span>
+        </a>
+      </ng-container>
+
+      <ng-container *ngIf="userRole === 'Instructor'">
+        <a routerLink="/instructor/analytics" routerLinkActive="active" class="nav-link">
+          <mat-icon>insights</mat-icon>
+          <span>Overview</span>
+        </a>
+        <a routerLink="/instructor/courses" routerLinkActive="active" class="nav-link">
+          <mat-icon>library_books</mat-icon>
+          <span>Courses</span>
+        </a>
+      </ng-container>
+
+      <ng-container *ngIf="userRole === 'Admin'">
+        <a routerLink="/admin/analytics" routerLinkActive="active" class="nav-link">
+          <mat-icon>monitoring</mat-icon>
+          <span>Analytics</span>
+        </a>
+
+        <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
+          <mat-icon>group</mat-icon>
+          <span>Users</span>
+        </a>
+      </ng-container>
+    </div>
+
+    <div class="nav-right">
+      <ng-container *ngIf="isLoggedIn; else guestActions">
+        <div class="role-chip">{{ userRole }}</div>
+
+        <button class="profile-button" [matMenuTriggerFor]="profileMenu" type="button">
+          <div class="avatar">{{ userInitial }}</div>
+        </button>
+
+        <mat-menu #profileMenu="matMenu" class="profile-menu">
+          <button mat-menu-item routerLink="/student/profile" *ngIf="userRole === 'Student'">
+            <mat-icon>person</mat-icon>
+            <span>Profile</span>
+          </button>
+
+          <button mat-menu-item routerLink="/student/purchases" *ngIf="userRole === 'Student'">
+            <mat-icon>receipt_long</mat-icon>
+            <span>Purchases</span>
+          </button>
+
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+      </ng-container>
+
+      <ng-template #guestActions>
+        <a routerLink="/auth/login" class="ghost-action">Login</a>
+        <a routerLink="/auth/register" class="primary-action">Get Started</a>
+      </ng-template>
+    </div>
+  </div>
+</nav>

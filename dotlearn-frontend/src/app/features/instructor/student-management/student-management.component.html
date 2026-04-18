@@ -1,0 +1,67 @@
+<div class="students-page">
+  <div class="page-header">
+    <div class="header-left">
+      <a class="back-link" routerLink="/instructor/courses">← Back to Courses</a>
+      <h1>Student Management</h1>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-btn" [class.active]="activeFilter === 'all'" (click)="filter('all')">
+      All ({{ students.length }})
+    </button>
+    <button class="filter-btn" [class.active]="activeFilter === 'not-started'" (click)="filter('not-started')">
+      Not Started
+    </button>
+    <button class="filter-btn" [class.active]="activeFilter === 'in-progress'" (click)="filter('in-progress')">
+      In Progress
+    </button>
+    <button class="filter-btn" [class.active]="activeFilter === 'completed'" (click)="filter('completed')">
+      Completed
+    </button>
+  </div>
+
+  <div class="loading-wrap" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Loading students...</span>
+  </div>
+
+  <div class="empty-state" *ngIf="!isLoading && filteredStudents.length === 0">
+    <div class="empty-icon">👥</div>
+    <h3>No students yet</h3>
+    <p>Students will appear here once they enroll in your course.</p>
+  </div>
+
+  <div class="students-table-wrap" *ngIf="!isLoading && filteredStudents.length > 0">
+    <table class="students-table">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Enrolled</th>
+          <th>Progress</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of filteredStudents">
+          <td class="student-id">{{ s.studentId | slice:0:8 }}...</td>
+          <td>{{ s.enrolledAt | date:'mediumDate' }}</td>
+          <td>
+            <div class="progress-cell">
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="s.progressPercent"></div>
+              </div>
+              <span class="progress-pct">{{ s.progressPercent | number:'1.0-0' }}%</span>
+            </div>
+          </td>
+          <td>
+            <span class="status-badge"
+              [ngClass]="s.status === 'Completed' ? 'badge-completed' : s.status === 'Active' ? 'badge-active' : 'badge-inactive'">
+              {{ s.status }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

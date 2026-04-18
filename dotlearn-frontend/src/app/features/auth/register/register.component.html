@@ -1,0 +1,60 @@
+<div class="auth-page">
+  <div class="auth-layout">
+    <!-- Left -->
+    <div class="auth-brand">
+      <div class="brand-box">
+        <div class="brand-mark">D</div>
+        <h1>Start your journey</h1>
+        <p>
+          Join DOTLearn and unlock structured learning, progress tracking,
+          and certifications.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right -->
+    <div class="auth-form-wrap">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-card">
+        <h2>Create account</h2>
+        <p class="subtext">Start learning in minutes</p>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullName" data-cy="fullname-input">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" data-cy="email-input">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password" data-cy="password-input">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Role</mat-label>
+          <mat-select formControlName="role" data-cy="role-select">
+            <mat-option value="Student">Student</mat-option>
+            <mat-option value="Instructor">Instructor</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="divider"><span>OR</span></div>
+        <div id="google-btn" class="google-login-btn"></div>
+        <br/>
+
+        <button type="submit" class="primary-btn" [disabled]="form.invalid || isLoading" data-cy="register-btn">
+          <mat-icon>person_add</mat-icon>
+          <span>{{ isLoading ? 'Creating...' : 'Create Account' }}</span>
+        </button>
+
+        <div class="auth-footer">
+          <span>Already have an account?</span>
+          <a routerLink="/auth/login">Sign in</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

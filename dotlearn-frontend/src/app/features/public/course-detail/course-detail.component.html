@@ -1,0 +1,140 @@
+<div *ngIf="isLoading" class="detail-loading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div *ngIf="course && !isLoading" class="detail-page">
+  <section class="detail-hero">
+    <div class="detail-hero-copy">
+      <div class="hero-badges">
+        <span class="badge">{{ course.level }}</span>
+        <span class="badge secondary">{{ course.category }}</span>
+      </div>
+
+      <h1>{{ course.title }}</h1>
+      <p>{{ course.description }}</p>
+
+      <div class="course-stats">
+        <div class="stat-pill">
+          <mat-icon>star</mat-icon>
+          <span>{{ course.averageRating | number:'1.1-1' }} Rating</span>
+        </div>
+
+        <div class="stat-pill">
+          <mat-icon>groups</mat-icon>
+          <span>{{ course.enrollmentCount }} students enrolled</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="detail-layout">
+    <!-- Main content -->
+    <main class="detail-main">
+      <section class="content-card overview-card">
+        <div class="section-head">
+          <h2>What you’ll learn</h2>
+          <p>A focused path designed to help you build practical skill fast.</p>
+        </div>
+
+        <div class="learning-points">
+          <div class="point">
+            <mat-icon>done</mat-icon>
+            <span>Hands-on learning with structured lessons</span>
+          </div>
+          <div class="point">
+            <mat-icon>done</mat-icon>
+            <span>Quizzes to reinforce concepts</span>
+          </div>
+          <div class="point">
+            <mat-icon>done</mat-icon>
+            <span>Progress tracking across sessions</span>
+          </div>
+          <div class="point">
+            <mat-icon>done</mat-icon>
+            <span>Certificate after successful completion</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-card curriculum-card">
+        <div class="section-head">
+          <h2>Curriculum</h2>
+          <p>Preview the course structure before you enroll.</p>
+        </div>
+
+        <div class="curriculum-list" *ngIf="lessons && lessons.length > 0; else noCurriculum">
+          <div class="curriculum-item" *ngFor="let lesson of lessons; let i = index">
+            <div class="curriculum-left">
+              <div class="lesson-no">{{ i + 1 }}</div>
+              <div class="lesson-copy">
+                <h4>{{ lesson.title }}</h4>
+                <span>{{ lesson.type }}</span>
+              </div>
+            </div>
+
+            <div class="lesson-right">
+              <span class="preview-chip" *ngIf="lesson.isPreview">Preview</span>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noCurriculum>
+          <div class="empty-curriculum">
+            <mat-icon>library_books</mat-icon>
+            <p>Curriculum will appear here once lessons are published.</p>
+          </div>
+        </ng-template>
+      </section>
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="detail-sidebar">
+      <div class="enrollment-card">
+        <div class="price-display">
+          {{ course.price === 0 ? 'Free' : ('₹' + course.price) }}
+        </div>
+
+        <button
+          class="enroll-btn"
+          *ngIf="isAlreadyEnrolled && userRole === 'Student'"
+          (click)="continueLearning()">
+          <mat-icon>menu_book</mat-icon>
+          <span>Continue Learning</span>
+        </button>
+
+        <button
+          class="enroll-btn"
+          *ngIf="!isAlreadyEnrolled && userRole === 'Student'"
+          (click)="enroll()"
+          [disabled]="isEnrolling">
+          <mat-icon>{{ course.price === 0 ? 'school' : 'shopping_bag' }}</mat-icon>
+          <span *ngIf="course.price === 0">
+            {{ isEnrolling ? 'Enrolling...' : 'Enroll for Free' }}
+          </span>
+          <span *ngIf="course.price !== 0">Buy Now</span>
+        </button>
+
+        <p class="guarantee">30-day money-back guarantee</p>
+
+        <div class="includes">
+          <div class="include-item">
+            <mat-icon>play_circle</mat-icon>
+            <span>Full video lessons</span>
+          </div>
+          <div class="include-item">
+            <mat-icon>quiz</mat-icon>
+            <span>Practice quizzes</span>
+          </div>
+          <div class="include-item">
+            <mat-icon>workspace_premium</mat-icon>
+            <span>Certificate of completion</span>
+          </div>
+          <div class="include-item">
+            <mat-icon>all_inclusive</mat-icon>
+            <span>Lifetime access</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

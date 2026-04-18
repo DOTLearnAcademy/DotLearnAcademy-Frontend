@@ -1,0 +1,86 @@
+<div class="certificates-page">
+  <section class="certificates-hero">
+    <div class="hero-copy">
+      <div class="hero-badge">
+        <mat-icon>workspace_premium</mat-icon>
+        <span>Certificate Center</span>
+      </div>
+
+      <h1>Your achievements, beautifully presented</h1>
+      <p>
+        Keep track of every certificate you’ve earned, open the PDF instantly,
+        and share your completed learning journey with confidence.
+      </p>
+    </div>
+
+    <div class="hero-stat-card">
+      <div class="stat-label">Certificates Earned</div>
+      <div class="stat-value">{{ certificates.length }}</div>
+      <div class="stat-meta">Issued after successful course completion</div>
+    </div>
+  </section>
+
+  <mat-progress-bar
+    mode="indeterminate"
+    *ngIf="isLoading"
+    class="loading-bar">
+  </mat-progress-bar>
+
+  <section class="cert-grid" *ngIf="!isLoading && certificates.length > 0">
+    <article class="cert-card" *ngFor="let cert of certificates">
+      <div class="cert-top">
+        <div class="cert-icon">
+          <mat-icon>verified</mat-icon>
+        </div>
+
+        <div class="cert-status">
+          <mat-icon>check_circle</mat-icon>
+          <span>Issued</span>
+        </div>
+      </div>
+
+      <div class="cert-body">
+        <div class="cert-label">Certificate</div>
+        <h3>{{ cert.courseName }}</h3>
+        <p class="cert-subtext">
+          Official course completion certificate issued by DOTLearn Academy.
+        </p>
+      </div>
+
+      <div class="verification-box">
+        <div class="verification-label">Verification Code</div>
+        <div class="verification-code">{{ cert.verificationCode }}</div>
+      </div>
+
+      <div class="cert-meta">
+        <div class="meta-item">
+          <span>Issued On</span>
+          <strong>{{ cert.issuedAt | date:'mediumDate' }}</strong>
+        </div>
+      </div>
+
+      <div class="cert-actions">
+        <button class="primary-action" (click)="download(cert)">
+          <mat-icon>download</mat-icon>
+          <span>Open Certificate</span>
+        </button>
+
+        <button class="secondary-action" (click)="shareLinkedIn(cert)">
+          <mat-icon>share</mat-icon>
+          <span>Share</span>
+        </button>
+      </div>
+    </article>
+  </section>
+
+  <section class="empty-state" *ngIf="!isLoading && certificates.length === 0">
+    <div class="empty-icon">
+      <mat-icon>workspace_premium</mat-icon>
+    </div>
+    <h3>Start exploring courses to begin your learning journey 🚀</h3>
+    <a routerLink="/student/my-learning" class="empty-cta">
+      <mat-icon>play_circle</mat-icon>
+      <span>Continue Learning</span>
+    </a>
+  </section>
+</div>
