@@ -7,7 +7,7 @@
   <mat-progress-bar mode="indeterminate" *ngIf="isLoading"></mat-progress-bar>
 
   <div class="kpi-grid" *ngIf="!isLoading">
-    <mat-card class="kpi-card">
+    <mat-card class="kpi-card" data-cy="kpi-total-users">
       <mat-card-content>
         <div class="kpi-icon-wrap">
           <mat-icon class="kpi-icon">group</mat-icon>
@@ -17,7 +17,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="kpi-card">
+    <mat-card class="kpi-card" data-cy="kpi-active-instructors">
       <mat-card-content>
         <div class="kpi-icon-wrap">
           <mat-icon class="kpi-icon">school</mat-icon>
@@ -27,7 +27,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card class="kpi-card">
+    <mat-card class="kpi-card" data-cy="kpi-registered-students">
       <mat-card-content>
         <div class="kpi-icon-wrap">
           <mat-icon class="kpi-icon">person</mat-icon>

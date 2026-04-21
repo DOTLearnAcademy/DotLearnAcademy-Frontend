@@ -78,8 +78,8 @@
     </button>
   </section>
 
-  <section class="course-grid" *ngIf="!isLoading && filteredEnrollments.length > 0">
-    <article class="course-card" *ngFor="let enrollment of filteredEnrollments">
+  <section class="course-grid" *ngIf="!isLoading && filteredEnrollments.length > 0" data-cy="course-grid">
+    <article class="course-card" data-cy="enrolled-course-card" *ngFor="let enrollment of filteredEnrollments">
       <div class="course-top">
         <div class="course-ident">
           <div class="course-icon">
@@ -136,7 +136,7 @@
     </article>
   </section>
 
-  <section class="empty-state" *ngIf="!isLoading && filteredEnrollments.length === 0">
+  <section class="empty-state" data-cy="empty-state" *ngIf="!isLoading && filteredEnrollments.length === 0">
     <div class="empty-illustration">
       <mat-icon>menu_book</mat-icon>
     </div>

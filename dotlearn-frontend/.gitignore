@@ -59,3 +59,7 @@ publish-*/
 publish-v*
 *.sql
 migration_error_capture.txt
+
+# Cypress test artifacts
+cypress/screenshots/
+cypress/videos/

@@ -90,9 +90,10 @@
       </mat-progress-bar>
 
       <div class="course-grid" *ngIf="!isLoading && courses.length > 0">
-        <article
+      <article
           *ngFor="let course of courses"
           class="course-card"
+          data-cy="course-card"
           [routerLink]="['/courses', course.id]">
 
           <div class="course-card-top">

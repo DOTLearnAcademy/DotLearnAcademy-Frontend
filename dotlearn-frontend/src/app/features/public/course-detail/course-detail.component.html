@@ -104,6 +104,7 @@
 
         <button
           class="enroll-btn"
+          data-cy="enroll-free-btn"
           *ngIf="!isAlreadyEnrolled && userRole === 'Student'"
           (click)="enroll()"
           [disabled]="isEnrolling">

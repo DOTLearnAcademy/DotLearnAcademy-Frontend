@@ -8,6 +8,7 @@
       </div>
     </a>
 
+    <!-- Desktop center nav links -->
     <div class="nav-center" *ngIf="isLoggedIn">
       <ng-container *ngIf="userRole === 'Student'">
         <a routerLink="/student/my-learning" routerLinkActive="active" class="nav-link">
@@ -40,7 +41,6 @@
           <mat-icon>monitoring</mat-icon>
           <span>Analytics</span>
         </a>
-
         <a routerLink="/admin/users" routerLinkActive="active" class="nav-link">
           <mat-icon>group</mat-icon>
           <span>Users</span>
@@ -51,6 +51,18 @@
     <div class="nav-right">
       <ng-container *ngIf="isLoggedIn; else guestActions">
         <div class="role-chip">{{ userRole }}</div>
+
+        <!-- Hamburger — mobile/tablet only, shown when nav-center is hidden -->
+        <button
+          class="hamburger-btn"
+          type="button"
+          (click)="toggleMobileMenu()"
+          [class.open]="mobileMenuOpen"
+          aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
         <button class="profile-button" [matMenuTriggerFor]="profileMenu" type="button">
           <div class="avatar">{{ userInitial }}</div>
@@ -79,5 +91,45 @@
         <a routerLink="/auth/register" class="primary-action">Get Started</a>
       </ng-template>
     </div>
+  </div>
+
+  <!-- Mobile slide-down menu -->
+  <div class="mobile-menu" *ngIf="isLoggedIn && mobileMenuOpen">
+    <ng-container *ngIf="userRole === 'Student'">
+      <a routerLink="/student/my-learning" routerLinkActive="active" class="mobile-link" (click)="closeMobileMenu()">
+        <mat-icon>play_circle</mat-icon>
+        <span>My Learning</span>
+      </a>
+      <a routerLink="/courses" routerLinkActive="active" class="mobile-link" (click)="closeMobileMenu()">
+        <mat-icon>travel_explore</mat-icon>
+        <span>Explore</span>
+      </a>
+      <a routerLink="/student/certificates" routerLinkActive="active" class="mobile-link" (click)="closeMobileMenu()">
+        <mat-icon>workspace_premium</mat-icon>
+        <span>Certificates</span>
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'Instructor'">
+      <a routerLink="/instructor/analytics" routerLinkActive="active" class="mobile-link" (click)="closeMobileMenu()">
+        <mat-icon>insights</mat-icon>
+        <span>Overview</span>
+      </a>
+      <a routerLink="/instructor/courses" routerLinkActive="active" class="mobile-link" (click)="closeMobileMenu()">
+        <mat-icon>library_books</mat-icon>
+        <span>Courses</span>
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="userRole === 'Admin'">
+      <a routerLink="/admin/analytics" routerLinkActive="active" class="mobile-link" (click)="closeMobileMenu()">
+        <mat-icon>monitoring</mat-icon>
+        <span>Analytics</span>
+      </a>
+      <a routerLink="/admin/users" routerLinkActive="active" class="mobile-link" (click)="closeMobileMenu()">
+        <mat-icon>group</mat-icon>
+        <span>Users</span>
+      </a>
+    </ng-container>
   </div>
 </nav>

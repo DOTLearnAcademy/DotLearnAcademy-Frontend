@@ -1,5 +1,5 @@
 <!-- Hero Section -->
-<section class="hero premium-gradient-bg">
+<section class="hero premium-gradient-bg" data-cy="hero-section">
   <div class="hero-container">
     <div class="hero-content">
       <h1>Learn Without Limits</h1>
@@ -18,10 +18,10 @@
 </section>
 
 <!-- Featured Courses -->
-<section class="section">
+<section class="section" data-cy="featured-courses">
   <h2>Featured Courses</h2>
   <div class="course-grid" *ngIf="!isLoading">
-    <mat-card *ngFor="let course of featuredCourses" class="course-card">
+    <mat-card *ngFor="let course of featuredCourses" class="course-card" data-cy="course-card">
       <mat-card-header>
         <mat-card-title>{{ course.title }}</mat-card-title>
         <mat-card-subtitle>{{ course.level }}</mat-card-subtitle>

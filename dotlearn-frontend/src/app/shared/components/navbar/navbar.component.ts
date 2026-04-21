@@ -20,6 +20,7 @@ export class NavbarComponent implements OnInit {
   userEmail = '';
   userInitials = '';
   dropdownOpen = false;
+  mobileMenuOpen = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -73,6 +74,14 @@ export class NavbarComponent implements OnInit {
 
   closeDropdown() {
     this.dropdownOpen = false;
+  }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
   }
 
   logout() {

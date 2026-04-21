@@ -165,6 +165,78 @@
   transform: translateY(-1px);
 }
 
+// ─── Hamburger button (hidden on desktop) ───────────────────────────────────
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0;
+
+  span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--text-soft);
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    transform-origin: center;
+  }
+
+  // X shape when open
+  &.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+  &.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  &.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+}
+
+// ─── Mobile slide-down menu ──────────────────────────────────────────────────
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  padding: 8px 16px 16px;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
+  gap: 4px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mobile-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text-soft);
+  font-weight: 500;
+  transition: background 0.18s ease, color 0.18s ease;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #8b5cf6;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+  }
+
+  &.active {
+    background: rgba(124, 108, 255, 0.14);
+    color: #d9d5ff;
+  }
+}
+
 @media (max-width: 1024px) {
   .nav-inner {
     grid-template-columns: 1fr auto;
@@ -172,6 +244,14 @@
 
   .nav-center {
     display: none;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .mobile-menu {
+    display: flex;
   }
 }
 
